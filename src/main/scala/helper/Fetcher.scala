@@ -23,6 +23,9 @@ object Fetcher {
         responseAsJSON.addProperty("derived_radiant_stacked_camps", stacks(0))
         responseAsJSON.addProperty("derived_dire_stacked_camps", stacks(1))
 
+        responseAsJSON.addProperty("derived_radiant_gpm", stacks(2))
+        responseAsJSON.addProperty("derived_dire_gpm", stacks(3))
+
         val instanceOfMatch: Match = gson.fromJson(responseAsJSON, classOf[Match])
 
         seqOfGames = seqOfGames :+ instanceOfMatch
