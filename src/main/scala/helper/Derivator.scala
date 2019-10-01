@@ -10,22 +10,12 @@ object Derivator {
 	def countStacks(players: JsonArray): Array[Integer] = {
 		val results = new Array[Integer](11)
 
-		var radiantCampsStacked = 0
-		var direCampsStacked = 0
-
-		var radiantGPM = 0
-		var direGPM = 0
-
-		var radiantFirstBlood = 0
-
-		var radiantLevels = 0
-		var direLevels = 0
-
-		var radiantObs = 0
-		var direObs = 0
-
-		var radiantRoshans = 0
-		var direRoshans = 0
+		var radiantCampsStacked, direCampsStacked,
+			radiantGPM, direGPM,
+			radiantFirstBlood, direFirstBlood,
+			radiantLevels, direLevels,
+			radiantObs, direObs,
+			radiantRoshans, direRoshans = 0
 
 		for (x <- 0 to 9) {
 			val player = players.get(x)
@@ -40,7 +30,7 @@ object Derivator {
 			if (x > 4) {
 				direCampsStacked += elemCampsStacked
 				direGPM += elemGPM
-				if(elemFirstBlood.equals(1)) radiantFirstBlood = 0
+				direFirstBlood += elemFirstBlood
 				direLevels += elemLevels
 				direObs += elemObs
 				direRoshans += elemRoshan
@@ -48,7 +38,7 @@ object Derivator {
 			else {
 				radiantCampsStacked += elemCampsStacked
 				radiantGPM += elemGPM
-				if(elemFirstBlood.equals(1)) radiantFirstBlood = 1
+				radiantFirstBlood += elemFirstBlood
 				radiantLevels += elemLevels
 				radiantObs += elemObs
 				radiantRoshans += elemRoshan
