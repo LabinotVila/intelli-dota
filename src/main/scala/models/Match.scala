@@ -27,5 +27,7 @@ case class Match
 	derived_dire_obs: Int,
 
 	derived_radiant_roshans: Int,
-	derived_dire_roshans: Int
+	derived_dire_roshans: Int,
+
+	radiant_win: Int
 )

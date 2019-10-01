@@ -1,6 +1,8 @@
 package helper
 
-import com.google.gson.{Gson, JsonArray}
+import com.google.gson.{Gson, JsonArray, JsonNull}
+
+import scala.util.Try
 
 object Derivator {
 	val gson = new Gson()
@@ -28,12 +30,12 @@ object Derivator {
 		for (x <- 0 to 9) {
 			val player = players.get(x)
 
-			val elemCampsStacked = player.getAsJsonObject.get("camps_stacked").getAsInt
+			var elemCampsStacked = Try(player.getAsJsonObject.get("camps_stacked").getAsInt).getOrElse(0)
 			val elemGPM = player.getAsJsonObject.get("gold_per_min").getAsInt
-			val elemFirstBlood = player.getAsJsonObject.get("firstblood_claimed").getAsInt
+			val elemFirstBlood = Try(player.getAsJsonObject.get("firstblood_claimed").getAsInt).getOrElse(0)
 			val elemLevels = player.getAsJsonObject.get("level").getAsInt
-			val elemObs = player.getAsJsonObject.get("obs").getAsJsonObject.size()
-			val elemRoshan = player.getAsJsonObject.get("roshans_killed").getAsInt
+			val elemObs = Try(player.getAsJsonObject.get("obs").getAsJsonObject.size).getOrElse(0)
+			val elemRoshan = Try(player.getAsJsonObject.get("roshans_killed").getAsInt).getOrElse(0)
 
 			if (x > 4) {
 				direCampsStacked += elemCampsStacked
