@@ -18,13 +18,24 @@ object Fetcher {
         val responseAsJSON = json.parse(response.text).getAsJsonObject
 
         val players = responseAsJSON.get("players").getAsJsonArray
-        val stacks = Stacks.countStacks(players)
+        val stacks = Derivator.countStacks(players)
 
         responseAsJSON.addProperty("derived_radiant_stacked_camps", stacks(0))
         responseAsJSON.addProperty("derived_dire_stacked_camps", stacks(1))
 
         responseAsJSON.addProperty("derived_radiant_gpm", stacks(2))
         responseAsJSON.addProperty("derived_dire_gpm", stacks(3))
+
+        responseAsJSON.addProperty("derived_radiant_first_blood", stacks(4))
+
+        responseAsJSON.addProperty("derived_radiant_levels", stacks(5))
+        responseAsJSON.addProperty("derived_dire_levels", stacks(6))
+
+        responseAsJSON.addProperty("derived_radiant_obs", stacks(7))
+        responseAsJSON.addProperty("derived_dire_obs", stacks(8))
+
+        responseAsJSON.addProperty("derived_radiant_roshans", stacks(9))
+        responseAsJSON.addProperty("derived_dire_roshans", stacks(10))
 
         val instanceOfMatch: Match = gson.fromJson(responseAsJSON, classOf[Match])
 
