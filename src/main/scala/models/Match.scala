@@ -18,6 +18,9 @@ case class Match
   dire_score: Int,
   dire_team_id: Int,
 
+  derived_radiant_stacked_camps: Int,
+  derived_dire_stacked_camps: Int,
+
   duration: Int,
   engine: Int,
   first_blood_time: Int,
