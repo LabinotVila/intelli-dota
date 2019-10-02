@@ -2,6 +2,7 @@ package helper
 
 import com.google.gson.{Gson, JsonParser}
 import models.Match
+import helper.Variables
 
 import scala.util.Try
 
@@ -12,6 +13,8 @@ object Fetcher {
 	def fetchGames(api: String, from: Int, at: Int): Seq[Match] = {
 		var seqOfGames = Seq[Match]()
 
+		var countGamesFound = 0
+
 		for (i <- from to at) {
 
 			val response = requests.get(api + i)
@@ -21,8 +24,10 @@ object Fetcher {
 				val responseAsJSON = json.parse(response.text).getAsJsonObject
 				val gameSkillLevel = Try(responseAsJSON.get("skill").getAsInt).getOrElse(0)
 
-				if (gameSkillLevel == 3) {
+				if (gameSkillLevel == Variables.getGameSkill() && countGamesFound <= Variables.getNumberOfFeeds()) {
+					countGamesFound += countGamesFound
 					println(api + i)
+					println(countGamesFound)
 
 					val players = responseAsJSON.get("players").getAsJsonArray
 					val stacks = Derivator.countStacks(players)
@@ -46,7 +51,6 @@ object Fetcher {
 
 					val radiantWin = responseAsJSON.get("radiant_win").getAsBoolean
 					responseAsJSON.remove("radiant_win")
-
 
 					if (radiantWin.equals(true))
 						responseAsJSON.addProperty("radiant_win", 1)
