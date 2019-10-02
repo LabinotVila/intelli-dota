@@ -11,23 +11,17 @@ case class Match
 	radiant_score: Int,
 	dire_score: Int,
 
-	derived_radiant_stacked_camps: Int,
-	derived_dire_stacked_camps: Int,
+	d_rad_gpm: Int,
+	d_dire_gpm: Int,
 
-	derived_radiant_gpm: Int,
-	derived_dire_gpm: Int,
+	d_rad_levels: Int,
+	d_dire_levels: Int,
 
-	first_blood_time: Int,
-	derived_radiant_first_blood: Int,
+	d_rad_goldSpent: Int,
+	d_dire_goldSpent: Int,
 
-	derived_radiant_levels: Int,
-	derived_dire_levels: Int,
-
-	derived_radiant_obs: Int,
-	derived_dire_obs: Int,
-
-	derived_radiant_roshans: Int,
-	derived_dire_roshans: Int,
+	d_rad_leaverStatus: Int,
+	d_dire_leaverStatus: Int,
 
 	radiant_win: Int
 )

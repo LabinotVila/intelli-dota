@@ -12,7 +12,11 @@ object Main {
 		val spark = SparkSession.builder.appName("T").master("local[1]").getOrCreate
 		import spark.implicits._
 
-		val seqOfGames = Fetcher.fetchGames("https://api.opendota.com/api/matches/50", Variables.getStartAt(), Variables.getEndAt())
-		val gamesDF = seqOfGames.toDF.write.format("csv").save("dataset.csv")
+		val seqOfGames = Fetcher.fetchGames("https://api.opendota.com/api/matches/50", Variables.startAt, Variables.endAt)
+
+		val gamesDF = seqOfGames.toDF
+
+		if (Variables.save)
+			gamesDF.write.format("csv").save("dataset.csv")
 	}
 }

@@ -24,30 +24,23 @@ object Fetcher {
 				val responseAsJSON = json.parse(response.text).getAsJsonObject
 				val gameSkillLevel = Try(responseAsJSON.get("skill").getAsInt).getOrElse(0)
 
-				if (gameSkillLevel == Variables.getGameSkill() && countGamesFound <= Variables.getNumberOfFeeds()) {
-					countGamesFound += countGamesFound
-					println(api + i)
-					println(countGamesFound)
+				if (gameSkillLevel == Variables.gameSkill && countGamesFound <= Variables.numberOfFeeds) {
+					countGamesFound += 1
 
 					val players = responseAsJSON.get("players").getAsJsonArray
 					val stacks = Derivator.countStacks(players)
 
-					responseAsJSON.addProperty("derived_radiant_stacked_camps", stacks(0))
-					responseAsJSON.addProperty("derived_dire_stacked_camps", stacks(1))
+					responseAsJSON.addProperty("d_rad_gpm", stacks(0))
+					responseAsJSON.addProperty("d_dire_gpm", stacks(1))
 
-					responseAsJSON.addProperty("derived_radiant_gpm", stacks(2))
-					responseAsJSON.addProperty("derived_dire_gpm", stacks(3))
+					responseAsJSON.addProperty("d_rad_levels", stacks(2))
+					responseAsJSON.addProperty("d_dire_levels", stacks(3))
 
-					responseAsJSON.addProperty("derived_radiant_first_blood", stacks(4))
+					responseAsJSON.addProperty("d_rad_goldSpent", stacks(4))
+					responseAsJSON.addProperty("d_dire_goldSpent", stacks(5))
 
-					responseAsJSON.addProperty("derived_radiant_levels", stacks(5))
-					responseAsJSON.addProperty("derived_dire_levels", stacks(6))
-
-					responseAsJSON.addProperty("derived_radiant_obs", stacks(7))
-					responseAsJSON.addProperty("derived_dire_obs", stacks(8))
-
-					responseAsJSON.addProperty("derived_radiant_roshans", stacks(9))
-					responseAsJSON.addProperty("derived_dire_roshans", stacks(10))
+					responseAsJSON.addProperty("d_rad_leaverStatus", stacks(6))
+					responseAsJSON.addProperty("d_dire_leaverStatus", stacks(7))
 
 					val radiantWin = responseAsJSON.get("radiant_win").getAsBoolean
 					responseAsJSON.remove("radiant_win")
@@ -63,6 +56,8 @@ object Fetcher {
 				}
 			}
 		}
+
+		seqOfGames.foreach(x => println(x))
 
 		seqOfGames
 	}
