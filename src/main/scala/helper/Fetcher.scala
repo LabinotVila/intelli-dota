@@ -1,5 +1,7 @@
 package helper
 
+import scala.util.control.Breaks._
+
 import com.google.gson.{Gson, JsonParser}
 import models.Match
 import helper.Variables
@@ -15,53 +17,44 @@ object Fetcher {
 
 		var countGamesFound = 0
 
-		for (i <- from to at) {
+		breakable {
 
-			val response = requests.get(api + i)
+			for (i <- from to at) {
 
-			if (response.statusCode != 404) {
+				val response = requests.get(api + i)
 
-				val responseAsJSON = json.parse(response.text).getAsJsonObject
-				val gameSkillLevel = Try(responseAsJSON.get("skill").getAsInt).getOrElse(0)
+				if (response.statusCode != 404) {
 
-				if (gameSkillLevel == Variables.gameSkill && countGamesFound <= Variables.numberOfFeeds) {
-					countGamesFound += 1
+					val responseAsJSON = json.parse(response.text).getAsJsonObject
+					val gameSkill = Try(responseAsJSON.get("skill").getAsInt).getOrElse(0)
 
-					val players = responseAsJSON.get("players").getAsJsonArray
-					val stacks = Derivator.countStacks(players)
+					if (gameSkill != 0 && gameSkill != 1) {
+						if (countGamesFound < Variables.numberOfFeeds) {
+							countGamesFound += 1
+							println(countGamesFound + ": " + api + i)
 
-					responseAsJSON.addProperty("d_rad_gpm", stacks(0))
-					responseAsJSON.addProperty("d_dire_gpm", stacks(1))
+							val players = responseAsJSON.get("players").getAsJsonArray
+							val stacks = Derivator.countStacks(players)
 
-					responseAsJSON.addProperty("d_rad_levels", stacks(2))
-					responseAsJSON.addProperty("d_dire_levels", stacks(3))
+							stacks.foreach(hash => {
+								responseAsJSON.addProperty(hash._1, hash._2)
+							})
 
-					responseAsJSON.addProperty("d_rad_goldSpent", stacks(4))
-					responseAsJSON.addProperty("d_dire_goldSpent", stacks(5))
+							val radiantWin = responseAsJSON.get("radiant_win").getAsBoolean
+							responseAsJSON.remove("radiant_win")
 
-					responseAsJSON.addProperty("d_rad_leaverStatus", stacks(6))
-					responseAsJSON.addProperty("d_dire_leaverStatus", stacks(7))
+							if (radiantWin.equals(true))
+								responseAsJSON.addProperty("radiant_win", 1)
+							else
+								responseAsJSON.addProperty("radiant_win", 0)
 
-					responseAsJSON.addProperty("d_rad_xpm", stacks(8))
-					responseAsJSON.addProperty("d_dire_xpm", stacks(9))
+							val instanceOfMatch: Match = gson.fromJson(responseAsJSON, classOf[Match])
 
-					responseAsJSON.addProperty("d_rad_heroDamage", stacks(10))
-					responseAsJSON.addProperty("d_dire_heroDamage", stacks(11))
-
-					responseAsJSON.addProperty("d_rad_towerDamage", stacks(12))
-					responseAsJSON.addProperty("d_dire_towerDamage", stacks(13))
-
-					val radiantWin = responseAsJSON.get("radiant_win").getAsBoolean
-					responseAsJSON.remove("radiant_win")
-
-					if (radiantWin.equals(true))
-						responseAsJSON.addProperty("radiant_win", 1)
-					else
-						responseAsJSON.addProperty("radiant_win", 0)
-
-					val instanceOfMatch: Match = gson.fromJson(responseAsJSON, classOf[Match])
-
-					seqOfGames = seqOfGames :+ instanceOfMatch
+							seqOfGames = seqOfGames :+ instanceOfMatch
+						} else {
+							break
+						}
+					}
 				}
 			}
 		}

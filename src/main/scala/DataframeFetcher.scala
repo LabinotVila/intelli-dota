@@ -3,7 +3,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.log4j.Logger
 import org.apache.log4j.Level
 
-object Main {
+object DataframeFetcher {
 	def main(args: Array[String]) = {
 
 		Logger.getLogger("org").setLevel(Level.OFF)
@@ -16,7 +16,6 @@ object Main {
 
 		val gamesDF = seqOfGames.toDF
 
-		if (Variables.save)
-			gamesDF.write.format("csv").save("created_dataset")
+		gamesDF.write.format("csv").save("created_dataset")
 	}
 }

@@ -2,21 +2,23 @@ package helper
 
 import com.google.gson.{Gson, JsonArray, JsonNull}
 
-import scala.util.Try
+import scala.collection.mutable
+import scala.collection.mutable.HashMap
 
 object Derivator {
 	val gson = new Gson()
 
-	def countStacks(players: JsonArray): Array[Integer] = {
-		val results = new Array[Integer](14)
+	def countStacks(players: JsonArray): HashMap[String, Integer] = {
+		val results = new HashMap[String, Integer]
+		val elements = new mutable.HashMap[String, String]()
 
-		var radiantGPM, direGPM,
-			radiantLevels, direLevels,
-			radiantGoldSpent, direGoldSpent,
-			radiantLeaverStatus, direLeaverStatus,
-			radiantXPM, direXPM,
-			radiantHeroDamage, direHeroDamage,
-			radiantTowerDamage, direTowerDamage = 0
+		var d_rad_gpm, d_dire_gpm,
+		d_rad_levels, d_dire_levels,
+		d_rad_goldSpent, d_dire_goldSpent,
+		d_rad_leaverStatus, d_dire_leaverStatus,
+		d_rad_xpm, d_dire_xpm,
+		d_rad_heroDamage, d_dire_heroDamage,
+		d_rad_towerDamage, d_dire_towerDamage = 0
 
 		for (x <- 0 to 9) {
 			val player = players.get(x)
@@ -30,45 +32,45 @@ object Derivator {
 			var elemTowerDamage = player.getAsJsonObject.get("tower_damage").getAsInt
 
 			if (x > 4) {
-				direGPM += elemGPM
-				direLevels += elemLevels
-				direGoldSpent += elemGoldSpent
-				direLeaverStatus += elemLeaverStatus
-				direXPM += elemXPM
-				direHeroDamage += elemHeroDamage
-				direTowerDamage += elemTowerDamage
+				d_dire_gpm += elemGPM
+				d_dire_levels += elemLevels
+				d_dire_goldSpent += elemGoldSpent
+				d_dire_leaverStatus += elemLeaverStatus
+				d_dire_xpm += elemXPM
+				d_dire_heroDamage += elemHeroDamage
+				d_dire_towerDamage += elemTowerDamage
 			}
 			else {
-				radiantGPM += elemGPM
-				radiantLevels += elemLevels
-				radiantGoldSpent += elemGoldSpent
-				radiantLeaverStatus += elemLeaverStatus
-				radiantXPM += elemXPM
-				radiantHeroDamage += elemHeroDamage
-				radiantTowerDamage += elemTowerDamage
+				d_rad_gpm += elemGPM
+				d_rad_levels += elemLevels
+				d_rad_goldSpent += elemGoldSpent
+				d_rad_leaverStatus += elemLeaverStatus
+				d_rad_xpm += elemXPM
+				d_rad_heroDamage += elemHeroDamage
+				d_rad_towerDamage += elemTowerDamage
 			}
 		}
 
-		results(0) = radiantGPM
-		results(1) = direGPM
+		results.put("d_rad_gpm", d_rad_gpm)
+		results.put("d_dire_gpm", d_dire_gpm)
 
-		results(2) = radiantLevels
-		results(3) = direLevels
+		results.put("d_rad_levels", d_rad_levels)
+		results.put("d_dire_levels", d_dire_levels)
 
-		results(4) = radiantGoldSpent
-		results(5) = direGoldSpent
+		results.put("d_rad_goldSpent", d_rad_goldSpent)
+		results.put("d_dire_goldSpent", d_dire_goldSpent)
 
-		results(6) = radiantLeaverStatus
-		results(7) = direLeaverStatus
+		results.put("d_rad_leaverStatus", d_rad_leaverStatus)
+		results.put("d_dire_leaverStatus", d_dire_leaverStatus)
 
-		results(8) = radiantXPM
-		results(9) = direXPM
+		results.put("d_rad_xpm", d_rad_xpm)
+		results.put("d_dire_xpm", d_dire_xpm)
 
-		results(10) = radiantHeroDamage
-		results(11) = direHeroDamage
+		results.put("d_rad_heroDamage", d_rad_heroDamage)
+		results.put("d_dire_heroDamage", d_dire_heroDamage)
 
-		results(12) = radiantTowerDamage
-		results(13) = direTowerDamage
+		results.put("d_rad_towerDamage", d_rad_towerDamage)
+		results.put("d_dire_towerDamage", d_dire_towerDamage)
 
 		results
 	}
