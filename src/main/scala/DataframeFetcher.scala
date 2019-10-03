@@ -16,6 +16,6 @@ object DataframeFetcher {
 
 		val gamesDF = seqOfGames.toDF
 
-		gamesDF.write.format("csv").save("created_dataset")
+//		gamesDF.write.format("csv").save("created_dataset")
 	}
 }
