@@ -1,4 +1,4 @@
-import helper.{Fetcher, Variables}
+import helper.{Fetcher, Globals}
 import models.Match
 import org.apache.spark.sql.SparkSession
 import org.apache.log4j.Logger
@@ -19,8 +19,8 @@ object DataframeFetcher {
 		var foundGames = 0
 
 		breakable {
-			for (gameId <- Variables.startAt to Variables.endAt) {
-				val game = Fetcher.fetchGames("https://api.opendota.com/api/matches/50" + gameId)
+			for (gameId <- Globals.startAt to Globals.endAt) {
+				val game = Fetcher.fetchGames(Globals.api + gameId)
 				if (game != null) matches = matches :+ game
 
 				if (foundGames == 20) break
