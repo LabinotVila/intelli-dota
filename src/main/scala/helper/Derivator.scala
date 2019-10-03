@@ -10,33 +10,23 @@ object Derivator {
 	def countStacks(players: JsonArray): HashMap[String, Integer] = {
 		val results = new HashMap[String, Integer]
 		val map = Array(
-			("gold_per_min", "_gpm"),
-			("level", "_levels"),
-			("gold_spent", "_goldSpent"),
-			("leaver_status", "_leaverStatus"),
-			("total_xp", "_xpm"),
-			("hero_damage", "_heroDamage"),
-			("tower_damage", "_towerDamage")
+			"gold_per_min", "level", "gold_spent", "leaver_status", "xp_per_min", "hero_damage",
+			"tower_damage"
 		)
 
-		map.foreach(tuple => {
+		map.foreach(attribute => {
 			var radAttr, direAttr = 0
 
 			for (i <- 0 to 9) {
-				if (i < 5) {
-					val player = players.get(i)
-					var attrValue = player.getAsJsonObject.get(tuple._1).getAsInt
-					radAttr += attrValue
-				}
-				results.put("d_rad" + tuple._2, radAttr)
+				var attr = players.get(i).getAsJsonObject.get(attribute).getAsInt
 
-				if (i >= 5) {
-					val player = players.get(i)
-					var attrValue = player.getAsJsonObject.get(tuple._1).getAsInt
-					direAttr += attrValue
-				}
-				results.put("d_dire" + tuple._2, direAttr)
+				if (i < 5) radAttr += attr
+
+
+				if (i >= 5) direAttr += attr
 			}
+			results.put("d_dire_" + attribute, direAttr)
+			results.put("d_rad_" + attribute, radAttr)
 		})
 
 		results
