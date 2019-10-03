@@ -23,5 +23,14 @@ case class Match
 	d_rad_leaverStatus: Int,
 	d_dire_leaverStatus: Int,
 
+	d_rad_xpm: Int,
+	d_dire_xpm: Int,
+
+	d_rad_heroDamage: Int,
+	d_dire_heroDamage: Int,
+
+	d_rad_towerDamage: Int,
+	d_dire_towerDamage: Int,
+
 	radiant_win: Int
 )

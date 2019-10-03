@@ -42,6 +42,15 @@ object Fetcher {
 					responseAsJSON.addProperty("d_rad_leaverStatus", stacks(6))
 					responseAsJSON.addProperty("d_dire_leaverStatus", stacks(7))
 
+					responseAsJSON.addProperty("d_rad_xpm", stacks(8))
+					responseAsJSON.addProperty("d_dire_xpm", stacks(9))
+
+					responseAsJSON.addProperty("d_rad_heroDamage", stacks(10))
+					responseAsJSON.addProperty("d_dire_heroDamage", stacks(11))
+
+					responseAsJSON.addProperty("d_rad_towerDamage", stacks(12))
+					responseAsJSON.addProperty("d_dire_towerDamage", stacks(13))
+
 					val radiantWin = responseAsJSON.get("radiant_win").getAsBoolean
 					responseAsJSON.remove("radiant_win")
 

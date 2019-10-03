@@ -8,12 +8,15 @@ object Derivator {
 	val gson = new Gson()
 
 	def countStacks(players: JsonArray): Array[Integer] = {
-		val results = new Array[Integer](8)
+		val results = new Array[Integer](14)
 
 		var radiantGPM, direGPM,
 			radiantLevels, direLevels,
 			radiantGoldSpent, direGoldSpent,
-			radiantLeaverStatus, direLeaverStatus = 0
+			radiantLeaverStatus, direLeaverStatus,
+			radiantXPM, direXPM,
+			radiantHeroDamage, direHeroDamage,
+			radiantTowerDamage, direTowerDamage = 0
 
 		for (x <- 0 to 9) {
 			val player = players.get(x)
@@ -22,18 +25,27 @@ object Derivator {
 			val elemLevels = player.getAsJsonObject.get("level").getAsInt
 			val elemGoldSpent = player.getAsJsonObject.get("gold_spent").getAsInt
 			var elemLeaverStatus = player.getAsJsonObject.get("leaver_status").getAsInt
+			var elemXPM = player.getAsJsonObject.get("total_xp").getAsInt
+			var elemHeroDamage = player.getAsJsonObject.get("hero_damage").getAsInt
+			var elemTowerDamage = player.getAsJsonObject.get("tower_damage").getAsInt
 
 			if (x > 4) {
 				direGPM += elemGPM
 				direLevels += elemLevels
 				direGoldSpent += elemGoldSpent
 				direLeaverStatus += elemLeaverStatus
+				direXPM += elemXPM
+				direHeroDamage += elemHeroDamage
+				direTowerDamage += elemTowerDamage
 			}
 			else {
 				radiantGPM += elemGPM
 				radiantLevels += elemLevels
-				radiantGoldSpent += elemLevels
+				radiantGoldSpent += elemGoldSpent
 				radiantLeaverStatus += elemLeaverStatus
+				radiantXPM += elemXPM
+				radiantHeroDamage += elemHeroDamage
+				radiantTowerDamage += elemTowerDamage
 			}
 		}
 
@@ -48,6 +60,15 @@ object Derivator {
 
 		results(6) = radiantLeaverStatus
 		results(7) = direLeaverStatus
+
+		results(8) = radiantXPM
+		results(9) = direXPM
+
+		results(10) = radiantHeroDamage
+		results(11) = direHeroDamage
+
+		results(12) = radiantTowerDamage
+		results(13) = direTowerDamage
 
 		results
 	}

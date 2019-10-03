@@ -17,6 +17,6 @@ object Main {
 		val gamesDF = seqOfGames.toDF
 
 		if (Variables.save)
-			gamesDF.write.format("csv").save("dataset.csv")
+			gamesDF.write.format("csv").save("created_dataset")
 	}
 }
