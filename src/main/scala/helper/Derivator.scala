@@ -12,22 +12,19 @@ object Derivator {
 		val results = new HashMap[String, Integer]
 		val map = Array(
 			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills", "deaths", "denies",
-			"hero_damage", "tower_damage"
+			"hero_damage", "tower_damage", "last_hits", "hero_healing"
 		)
 
 		map.foreach(attribute => {
-			var radAttr, direAttr = 0
+			var radAttr = 0
 
-			for (i <- 0 to 9) {
+			for (i <- 0 to 5) {
 				var attr = Try(players.get(i).getAsJsonObject.get(attribute).getAsInt).getOrElse(0)
 
-				if (i < 5) radAttr += attr
-
-
-				if (i >= 5) direAttr += attr
+				radAttr += attr
 			}
-			results.put("d_dire_" + attribute, direAttr)
-			results.put("d_rad_" + attribute, radAttr)
+
+			results.put(attribute, radAttr)
 		})
 
 		results

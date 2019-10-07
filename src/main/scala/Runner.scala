@@ -18,16 +18,9 @@ object Runner {
 			.csv("created_dataset")
 
 		val myArray = Array(
-			"d_rad_kills", "d_dire_kills",
-			"d_rad_gold_per_min", "d_dire_gold_per_min",
-			"d_rad_level", "d_dire_level",
-			"d_rad_leaver_status", "d_dire_leaver_status",
-			"d_rad_xp_per_min", "d_dire_xp_per_min",
-			"d_rad_denies", "d_dire_denies",
-			"d_rad_hero_damage", "d_dire_hero_damage",
-			"d_rad_tower_damage", "d_dire_tower_damage"
+			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills",
+			 "deaths", "denies", "hero_damage", "tower_damage", "last_hits", "hero_healing", "duration"
 		)
-
 
 		val assembler = new VectorAssembler()
 			.setInputCols(myArray)
