@@ -18,7 +18,7 @@ object Runner {
 			.csv("created_dataset")
 
 		val myArray = Array(
-			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills", "gold_spent",
+			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills",
 			 "deaths", "denies", "hero_damage", "tower_damage", "last_hits", "hero_healing", "duration"
 		)
 
