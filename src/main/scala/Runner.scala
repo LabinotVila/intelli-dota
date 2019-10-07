@@ -18,7 +18,7 @@ object Runner {
 			.csv("created_dataset")
 
 		val myArray = Array(
-			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills",
+			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills", "gold_spent",
 			 "deaths", "denies", "hero_damage", "tower_damage", "last_hits", "hero_healing", "duration"
 		)
 
@@ -27,7 +27,7 @@ object Runner {
 			.setOutputCol("features")
 
 		var left = assembler.transform(dataframe)
-		left = left.withColumnRenamed("d_rad_win", "label")
+		left = left.withColumnRenamed("radiant_win", "label")
 
 		val Array(train, test) = left.randomSplit(Array(0.7, 0.3))
 
@@ -35,5 +35,14 @@ object Runner {
 
 		val predictions = model.transform(test)
 		predictions.show(50)
+
+		val evaluator = new MulticlassClassificationEvaluator()
+			.setLabelCol("label")
+			.setPredictionCol("prediction")
+			.setMetricName("accuracy")
+		val accuracy = evaluator.evaluate(predictions)
+
+		println(accuracy * 100 + "% accurate!")
+
 	}
 }

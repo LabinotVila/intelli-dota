@@ -24,10 +24,11 @@ object Fetcher {
 		val players = responseAsJSON.get("players").getAsJsonArray
 		val preparedGames = Derivator.prepareGame(players)
 
-		if(responseAsJSON.get("radiant_win").getAsBoolean) responseAsJSON.addProperty("d_rad_win", 1)
-		else responseAsJSON.addProperty("d_dire_win", 0)
-
+		val radiantWin = responseAsJSON.get("radiant_win").getAsBoolean
 		responseAsJSON.remove("radiant_win")
+
+		if (radiantWin) responseAsJSON.addProperty("radiant_win", 1)
+		else responseAsJSON.addProperty("radiant_win", 0)
 
 		preparedGames.foreach(hash => {
 			responseAsJSON.addProperty(hash._1, hash._2)

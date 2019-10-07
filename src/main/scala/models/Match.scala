@@ -12,6 +12,8 @@ case class Match
 
 	kills: Int,
 
+	gold_spent: Int,
+
 	deaths: Int,
 
 	denies: Int,
@@ -26,5 +28,5 @@ case class Match
 
 	duration: Int,
 
-	d_rad_win: Int
+	radiant_win: Int
 )
