@@ -11,14 +11,14 @@ object Derivator {
 	def prepareGame(players: JsonArray): HashMap[String, Integer] = {
 		val results = new HashMap[String, Integer]
 		val map = Array(
-			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills", "deaths", "denies"
+			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills", "deaths", "denies",
+			"hero_damage", "tower_damage"
 		)
 
 		map.foreach(attribute => {
 			var radAttr, direAttr = 0
 
 			for (i <- 0 to 9) {
-				println("Attrib: " + attribute)
 				var attr = Try(players.get(i).getAsJsonObject.get(attribute).getAsInt).getOrElse(0)
 
 				if (i < 5) radAttr += attr

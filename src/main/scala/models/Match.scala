@@ -2,13 +2,6 @@ package models
 
 case class Match
 (
-/*
-	barracks_status_radiant: Int,
-	barracks_status_dire: Int,
-
-	tower_status_radiant: Int,
-	tower_status_dire: Int,
-*/
 	d_rad_kills: Int,
 	d_dire_kills: Int,
 
@@ -26,6 +19,12 @@ case class Match
 
 	d_rad_denies: Int,
 	d_dire_denies: Int,
+
+	d_rad_hero_damage: Int,
+	d_dire_hero_damage: Int,
+
+	d_rad_tower_damage: Int,
+	d_dire_tower_damage: Int,
 
 	d_rad_win: Int
 )
