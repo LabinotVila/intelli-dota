@@ -13,17 +13,23 @@ object Fetcher {
 
 		val response = requests.get(api)
 
-		if (response.statusCode == 404) return null
+		if (response.statusCode != 200) return null
 
-		val responseAsJSON = json.parse(response.text).getAsJsonObject
-		val gameSkill = Try(responseAsJSON.get("skill").getAsInt).getOrElse(0)
+		val responseAsJSON = json.parse(response.text).getAsJsonObject.get("result").getAsJsonObject
 
-		if (gameSkill == 0 || gameSkill == 1) return null
+		if(responseAsJSON.has("error")) return null
+		if(responseAsJSON.get("duration").getAsInt == 0) return null
+		if(!responseAsJSON.has("radiant_win")) return null
 
 		val players = responseAsJSON.get("players").getAsJsonArray
-		val stacks = Derivator.countStacks(players)
+		val preparedGames = Derivator.prepareGame(players)
 
-		stacks.foreach(hash => {
+		if(responseAsJSON.get("radiant_win").getAsBoolean) responseAsJSON.addProperty("d_rad_win", 1)
+		else responseAsJSON.addProperty("d_dire_win", 0)
+
+		responseAsJSON.remove("radiant_win")
+
+		preparedGames.foreach(hash => {
 			responseAsJSON.addProperty(hash._1, hash._2)
 		})
 

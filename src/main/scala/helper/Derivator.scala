@@ -3,22 +3,23 @@ package helper
 import com.google.gson.{Gson, JsonArray, JsonNull}
 
 import scala.collection.mutable.HashMap
+import scala.util.Try
 
 object Derivator {
 	val gson = new Gson()
 
-	def countStacks(players: JsonArray): HashMap[String, Integer] = {
+	def prepareGame(players: JsonArray): HashMap[String, Integer] = {
 		val results = new HashMap[String, Integer]
 		val map = Array(
-			"gold_per_min", "level", "gold_spent", "leaver_status", "xp_per_min", "hero_damage",
-			"tower_damage"
+			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills", "deaths", "denies"
 		)
 
 		map.foreach(attribute => {
 			var radAttr, direAttr = 0
 
 			for (i <- 0 to 9) {
-				var attr = players.get(i).getAsJsonObject.get(attribute).getAsInt
+				println("Attrib: " + attribute)
+				var attr = Try(players.get(i).getAsJsonObject.get(attribute).getAsInt).getOrElse(0)
 
 				if (i < 5) radAttr += attr
 
