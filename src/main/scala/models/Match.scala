@@ -10,7 +10,8 @@ case class Match
 
 	xp_per_min: Int,
 
-	kills: Int,
+	radiant_score: Int,
+	dire_score: Int,
 
 	gold_spent: Int,
 

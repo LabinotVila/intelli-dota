@@ -2,7 +2,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.classification.NaiveBayes
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
-import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.feature.{StandardScaler, VectorAssembler}
 
 object Runner {
 	def main(args: Array[String]) = {
@@ -18,16 +18,26 @@ object Runner {
 			.csv("created_dataset")
 
 		val myArray = Array(
-			"gold_per_min", "level", "leaver_status", "xp_per_min", "kills",
-			 "deaths", "denies", "hero_damage", "tower_damage", "last_hits", "hero_healing", "duration"
+			"gold_per_min", "level", "leaver_status", "xp_per_min", "radiant_score",
+			"dire_score", "deaths", "denies", "hero_damage", "tower_damage", "last_hits", "hero_healing", "duration"
 		)
 
 		val assembler = new VectorAssembler()
 			.setInputCols(myArray)
-			.setOutputCol("features")
+			.setOutputCol("featured")
 
 		var left = assembler.transform(dataframe)
+
 		left = left.withColumnRenamed("radiant_win", "label")
+
+
+		val scaler = new StandardScaler()
+			.setInputCol("featured")
+			.setOutputCol("features")
+			.setWithStd(true)
+			.setWithMean(false)
+		val scaledModel = scaler.fit(left)
+		left = scaledModel.transform(left)
 
 		val Array(train, test) = left.randomSplit(Array(0.7, 0.3))
 

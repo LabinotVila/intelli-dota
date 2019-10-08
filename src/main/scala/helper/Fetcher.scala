@@ -30,9 +30,7 @@ object Fetcher {
 		if (radiantWin) responseAsJSON.addProperty("radiant_win", 1)
 		else responseAsJSON.addProperty("radiant_win", 0)
 
-		preparedGames.foreach(hash => {
-			responseAsJSON.addProperty(hash._1, hash._2)
-		})
+		preparedGames.foreach(hash => responseAsJSON.addProperty(hash._1, hash._2))
 
 		gson.fromJson(responseAsJSON, classOf[Match])
 	}
