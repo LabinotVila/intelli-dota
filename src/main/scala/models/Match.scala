@@ -11,7 +11,6 @@ case class Match
 	xp_per_min: Int,
 
 	radiant_score: Int,
-	dire_score: Int,
 
 	gold_spent: Int,
 

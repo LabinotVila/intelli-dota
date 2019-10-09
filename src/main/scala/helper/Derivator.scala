@@ -10,9 +10,10 @@ object Derivator {
 
 	def prepareGame(players: JsonArray): HashMap[String, Integer] = {
 		val results = new HashMap[String, Integer]
+
 		val map = Array(
-			"gold_per_min", "level", "leaver_status", "xp_per_min", "gold_spent", "deaths", "denies",
-			"hero_damage", "tower_damage", "last_hits", "hero_healing"
+			"gold_per_min", "level", "leaver_status", "xp_per_min", "radiant_score",
+			"deaths", "denies", "hero_damage", "tower_damage", "last_hits", "hero_healing", "duration"
 		)
 
 		map.foreach(attribute => {
