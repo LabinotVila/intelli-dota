@@ -7,7 +7,7 @@ import org.apache.spark.ml.feature.{StandardScaler, VectorAssembler}
 
 import helper.Globals
 
-object Runner {
+object Classification {
 	def main(args: Array[String]) = {
 		Logger.getLogger("org").setLevel(Level.OFF)
 		Logger.getLogger("akka").setLevel(Level.OFF)
