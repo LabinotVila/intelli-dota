@@ -14,7 +14,6 @@ object Runner {
 
 		val spark = SparkSession.builder.appName("T").master("local[*]").getOrCreate
 
-		// classification inc here
 		var dataframe = spark.read
 			.option("header", true)
 			.option("inferSchema", true)

@@ -3,8 +3,6 @@ package helper
 import com.google.gson.{Gson, JsonParser}
 import models.Match
 
-import scala.util.Try
-
 object Fetcher {
 	val gson = new Gson()
 	val json = new JsonParser()
@@ -17,12 +15,11 @@ object Fetcher {
 
 		val responseAsJSON = json.parse(response.text).getAsJsonObject.get("result").getAsJsonObject
 
-		if(responseAsJSON.has("error")) return null
-		if(responseAsJSON.get("duration").getAsInt == 0) return null
-		if(!responseAsJSON.has("radiant_win")) return null
+		if(
+			responseAsJSON.has("error") || responseAsJSON.get("duration").getAsInt == 0
+			|| !responseAsJSON.has("radiant_win")) return null
 
-		val players = responseAsJSON.get("players").getAsJsonArray
-		val preparedGames = Derivator.prepareGame(players)
+		val preparedGames = Derivator.prepareGame(responseAsJSON.get("players").getAsJsonArray)
 
 		val radiantWin = responseAsJSON.get("radiant_win").getAsBoolean
 		responseAsJSON.remove("radiant_win")
