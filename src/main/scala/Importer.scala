@@ -35,6 +35,8 @@ object Importer {
 
 		val gamesDF = matches.toDF
 
+		gamesDF.foreach(x => println(x))
+
 		gamesDF.write.format("csv")
 			.option("header", true)
     		.mode("overwrite")

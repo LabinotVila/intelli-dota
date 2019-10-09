@@ -11,12 +11,7 @@ object Derivator {
 	def prepareGame(players: JsonArray): HashMap[String, Integer] = {
 		val results = new HashMap[String, Integer]
 
-		val map = Array(
-			"gold_per_min", "level", "leaver_status", "xp_per_min", "radiant_score",
-			"deaths", "denies", "hero_damage", "tower_damage", "last_hits", "hero_healing", "duration"
-		)
-
-		map.foreach(attribute => {
+		Globals.attributes.foreach(attribute => {
 			var radAttr = 0
 
 			for (i <- 0 to 5) {

@@ -5,6 +5,8 @@ import org.apache.spark.ml.classification.{NaiveBayes, RandomForestClassifier}
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.feature.{StandardScaler, VectorAssembler}
 
+import helper.Globals
+
 object Runner {
 	def main(args: Array[String]) = {
 		Logger.getLogger("org").setLevel(Level.OFF)
@@ -21,32 +23,25 @@ object Runner {
 
 		val Array(train, test) = dataframe.randomSplit(Array(0.7, 0.3))
 
-		val myArray = Array(
-			"gold_per_min", "level", "leaver_status", "xp_per_min", "radiant_score",
-			"deaths", "denies", "hero_damage", "tower_damage", "last_hits", "hero_healing", "duration"
-		)
-
 		val assembler = new VectorAssembler()
-			.setInputCols(myArray)
+			.setInputCols(Globals.attributes)
 			.setOutputCol("non-scaled")
 		val scaler = new StandardScaler()
 			.setInputCol("non-scaled")
 			.setOutputCol("features")
 			.setWithStd(true)
 			.setWithMean(false)
-
 		val algorithm = new RandomForestClassifier()
 			.setLabelCol("label")
 			.setFeaturesCol("features")
 			.setNumTrees(10)
-//		val algorithm = new NaiveBayes()
 
 		val pipeline = new Pipeline()
     		.setStages(Array(assembler, scaler, algorithm))
 
-		val left = pipeline.fit(train)
+		val model = pipeline.fit(train)
 
-		val predictions = left.transform(test)
+		val predictions = model.transform(test)
 		predictions.show(50)
 
 		val evaluator = new MulticlassClassificationEvaluator()
