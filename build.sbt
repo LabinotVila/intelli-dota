@@ -1,19 +1,20 @@
-name := "Test2"
+name := "ScalaTry"
 
-version := "0.1"
+version := "1.0"
 
-scalaVersion := "2.12.8"
+lazy val `scalatry` = (project in file(".")).enablePlugins(PlayScala)
+
+resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
+
+resolvers += "Akka Snapshot Repository" at "https://repo.akka.io/snapshots/"
+
+scalaVersion := "2.12.2"
+
+libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % "2.4.4",
-  "org.apache.spark" %% "spark-sql" % "2.4.4",
-  "com.lihaoyi" %% "requests" % "0.1.8",
-  "com.google.code.gson" % "gson" % "2.8.5",
-  "org.apache.spark" %% "spark-mllib" % "2.4.4"
-)
+	"org.apache.spark" %% "spark-core" % "2.4.4",
+	"org.apache.spark" %% "spark-sql" % "2.4.4",
+	"org.apache.spark" %% "spark-mllib" % "2.4.4")
 
-fork in run := true
-javaOptions in run ++= Seq(
-  "-Dlog4j.debug=true",
-  "-Dlog4j.configuration=log4j.properties")
-outputStrategy := Some(StdoutOutput)
+unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
