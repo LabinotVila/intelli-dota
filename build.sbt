@@ -17,5 +17,7 @@ libraryDependencies ++= Seq(
 	"org.apache.spark" %% "spark-mllib" % "2.4.4")
 
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7"
+libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.7.2"
+
 
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
