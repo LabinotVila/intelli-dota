@@ -6,9 +6,9 @@
 # An example controller showing a sample home page
 GET     /                           controllers.MainController.index
 GET     /                           controllers.MainController.fetchGame
+POST    /predict                    controllers.MainController.predict
 
-GET     /                           controllers.HomeController.index
-GET     /s                          controllers.HomeController.getS(radiant_win: String)
+#GET     /                           controllers.HomeController.index
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 
