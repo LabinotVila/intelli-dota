@@ -4,8 +4,10 @@
 # ~~~~
 
 # An example controller showing a sample home page
+GET     /                           controllers.MainController.index
+GET     /                           controllers.MainController.fetchGame
+
 GET     /                           controllers.HomeController.index
-GET     /col                        controllers.HomeController.columns
 GET     /s                          controllers.HomeController.getS(radiant_win: String)
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count

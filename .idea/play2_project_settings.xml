@@ -51,7 +51,8 @@
         <entry key="scalatry">
           <value>
             <ProjectSettingsEntry>
-              <option name="confDir" value="C:\Users\Labinot\Documents\Scala\app" />
+              <option name="sourceDir" value="C:\Users\Labinot\Documents\GitHub\IntelliDota\app" />
+              <option name="confDir" value="C:\Users\Labinot\Documents\GitHub\IntelliDota\app" />
               <option name="playDistrPath" value="$USER_HOME$/.ivy2/cache/com.typesafe.play/play_2.12/jars/play_2.12-2.7.3.jar" />
               <option name="templateImports">
                 <list>
@@ -75,7 +76,7 @@
                   <option value="controllers.Assets.Asset" />
                 </list>
               </option>
-              <option name="uri" value="/C:/Users/Labinot/Documents/Scala" />
+              <option name="uri" value="/C:/Users/Labinot/Documents/GitHub/IntelliDota" />
             </ProjectSettingsEntry>
           </value>
         </entry>
