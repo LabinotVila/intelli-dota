@@ -1,14 +1,18 @@
 package controllers
 
 import javax.inject._
+import play.api.libs.json.Json
 import play.api.mvc._
-import runnable.ClassificationPredicter
+import runnable.Runnable
 
 @Singleton
 class MainController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
 	def index = Action {
-		Ok("Welcome to IntelliDota")
+		val columnNames = Runnable.getMainTableColumns
+			.filter(x => !x.equals("radiant_win"))
+
+		Ok(Json.toJson(columnNames))
 	}
 
 	def fetchGame = Action {
@@ -25,11 +29,15 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 			denies, hero_damage, tower_damage, last_hits, hero_healing, duration)
 
 		val tupleAsSeq = Seq(paramsAsTuple)
-		val prediction = ClassificationPredicter.predict(tupleAsSeq)
+		val prediction = Runnable.predict(tupleAsSeq).get(0)
 
-		val returned = prediction.get(0)
+		Ok(prediction)
 
-		Ok(returned)
+	}
 
+	def selectTwo(var1: Int, var2: Int) = Action {
+
+
+		Ok("Shekshi")
 	}
 }

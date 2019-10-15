@@ -4,11 +4,12 @@ import helper.Globals
 import org.apache.spark.ml.PipelineModel
 import org.apache.spark.sql.SparkSession
 
-object ClassificationPredicter {
+object Runnable {
+	val spark = SparkSession.builder.appName("T").master("local[*]").getOrCreate
+	import spark.implicits._
 
 	def predict(arr: Seq[(Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)]) = {
-		val spark = SparkSession.builder.appName("T").master("local[*]").getOrCreate
-		import spark.implicits._
+
 
 		val model = PipelineModel.load(Globals.MAIN_ROUTE + Globals.CLASSIFIED_MODEL)
 
@@ -25,5 +26,12 @@ object ClassificationPredicter {
 		val json2res = predictions.toJSON.collectAsList
 
 		json2res
+	}
+
+	def getMainTableColumns = {
+
+		val dataframe = spark.read.option("header", true).csv(Globals.MAIN_ROUTE + Globals.FETCHED_STEAM_DATA)
+
+		dataframe.schema.names
 	}
 }
