@@ -4,8 +4,6 @@ import helper.Globals
 import org.apache.spark.ml.PipelineModel
 import org.apache.spark.sql.SparkSession
 
-import models.MatchCut
-
 object ClassificationPredicter {
 
 	def predict(arr: Seq[(Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)]) = {

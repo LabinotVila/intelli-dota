@@ -5,9 +5,8 @@ import play.api.mvc._
 import runnable.ClassificationPredicter
 import helper.Globals
 import org.apache.spark.ml.PipelineModel
-import models.MatchCut
 import org.apache.spark.sql.SparkSession
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -43,8 +42,8 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		val tupleAsSeq = Seq(paramsAsTuple)
 
 		val prediction = ClassificationPredicter.predict(tupleAsSeq)
-
-		Ok("Nice")
+		
+		Ok("Sending reply back!")
 	}
 
 }
