@@ -3,11 +3,6 @@ package controllers
 import javax.inject._
 import play.api.mvc._
 import runnable.ClassificationPredicter
-import helper.Globals
-import org.apache.spark.ml.PipelineModel
-import org.apache.spark.sql.SparkSession
-import play.api.libs.json.{JsValue, Json}
-
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page.
@@ -42,8 +37,12 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		val tupleAsSeq = Seq(paramsAsTuple)
 
 		val prediction = ClassificationPredicter.predict(tupleAsSeq)
-		
-		Ok("Sending reply back!")
+
+		import com.google.gson.{Gson, JsonParser}
+
+		val returned = prediction.get(0)
+
+		Ok(returned.toString)
 	}
 
 }

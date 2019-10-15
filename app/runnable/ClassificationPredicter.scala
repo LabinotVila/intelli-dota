@@ -17,6 +17,8 @@ object ClassificationPredicter {
 
 		val predictions = model.transform(df)
 
-		predictions
+		val json2res = predictions.toJSON.collectAsList
+
+		json2res
 	}
 }
