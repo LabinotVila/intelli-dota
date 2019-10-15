@@ -25,7 +25,6 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 			denies, hero_damage, tower_damage, last_hits, hero_healing, duration)
 
 		val tupleAsSeq = Seq(paramsAsTuple)
-
 		val prediction = ClassificationPredicter.predict(tupleAsSeq)
 
 		val returned = prediction.get(0)
