@@ -24,9 +24,8 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	}
 
 	def selectAsCount(var1: String) = Action {
-		val fly = Visualization.operateOn(spark, dataframe.select(var1), var1)
+		val operation = Visualization.operateOn(spark, dataframe.select(var1), var1)
 
-//		Ok(fly.toJSON.collectAsList.toString)
-		Ok("LIT")
+		Ok(operation)
 	}
 }

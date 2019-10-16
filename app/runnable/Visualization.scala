@@ -1,40 +1,34 @@
 package runnable
 
-import org.apache.spark.ml.feature.{Bucketizer, QuantileDiscretizer}
-import org.apache.spark.sql.types.{DoubleType, IntegerType}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
-
-import scala.math
-import scala.util.Try
+import classes.Graph
+import org.apache.spark.ml.feature.Bucketizer
+import org.apache.spark.sql.types.DoubleType
 
 object Visualization {
-	def operateOn(spark: SparkSession, dataframe: DataFrame, var1: String): Any = {
-//		return dataframe.groupBy(var1).count
-
+	def operateOn(spark: SparkSession, dataframe: DataFrame, var1: String): String = {
 		val temp = "temp"
+		val bucket = "bucket"
 
 		val df = dataframe
-			.withColumn(temp, dataframe.col(var1).cast(DoubleType)).drop(var1)
-    		.withColumnRenamed(temp, var1)
+			.withColumn(temp, dataframe.col(var1).cast(DoubleType))
+    		.drop(var1).withColumnRenamed(temp, var1)
 
 		val min = df.orderBy(var1).first().getDouble(0)
 		val max = df.orderBy(desc(var1)).first().getDouble(0)
-		val mid = (max + min) / 2
 
-		println(Double.NegativeInfinity.getClass)
-
-		val splits = Array(Double.NegativeInfinity, min, mid, max, Double.PositiveInfinity)
-
-		splits.foreach(x => println(x))
+		val f = VizualizationMetrix.calculateFormula(min, max, 5) :+ Double.PositiveInfinity
 
 		val bucketizer = new Bucketizer()
 			.setInputCol(var1)
-			.setOutputCol("buckets")
-			.setSplits(splits)
+			.setOutputCol(bucket)
+			.setSplits(f)
 
-		val model = bucketizer.transform(dataframe)
+		val partOne = bucketizer.transform(df).groupBy(bucket).count.orderBy(bucket).toJSON.collectAsList.toString
 
-		model.show(30)
+		val partTwo = bucketizer.getSplits.drop(1).dropRight(1).mkString(",")
+
+		partOne.concat("\n[" + partTwo + "]")
 	}
 }
