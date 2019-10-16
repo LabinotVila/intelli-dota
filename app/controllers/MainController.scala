@@ -32,12 +32,11 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		val prediction = Runnable.predict(tupleAsSeq).get(0)
 
 		Ok(prediction)
-
 	}
 
-	def selectTwo(var1: Int, var2: Int) = Action {
+	def selectAsCount(var1: String) = Action {
+		val fly = Runnable.operateOn(var1)
 
-
-		Ok("Shekshi")
+		Ok(fly.toJSON.collectAsList.toString)
 	}
 }
