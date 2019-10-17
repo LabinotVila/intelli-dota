@@ -4,8 +4,6 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-
 GET     /getColumns                 controllers.MainController.getColumns
 GET     /getCorrelationMatrix       controllers.MainController.getCorrelationMatrix
 GET     /getSample                  controllers.MainController.getSample(percentage: Double)

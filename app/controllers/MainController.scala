@@ -3,15 +3,15 @@ package controllers
 import javax.inject._
 import play.api.libs.json.Json
 import play.api.mvc._
-import utilities.{Dataset, Globals, Statistics, Pre}
+import utilities.{Dataset, Constants, Statistics, Pre}
 
 @Singleton
 class MainController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val spark = Pre.spark("Our App", "local[*]")
-	val dataframe = Pre.dataframe(spark, Globals.MAIN_ROUTE + Globals.FETCHED_STEAM_DATA)
+	val dataframe = Pre.dataframe(spark, Constants.MAIN_ROUTE + Constants.FETCHED_STEAM_DATA)
 
 	def getColumns = Action {
-		val columnNames = Dataset.getColumns(spark, dataframe)
+		val columnNames = Dataset.getColumns(dataframe)
 
 		val result = Json.toJson(columnNames)
 
@@ -24,21 +24,21 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		Ok(result)
 	}
 
-	def getCorrelationMatrix() = Action {
-		val result = Dataset.getCorrelationMatrix(spark, dataframe)
+	def getCorrelationMatrix = Action {
+		val result = Dataset.getCorrelationMatrix(dataframe)
 
 		Ok(result)
 	}
 
 	def getGroupAndCount(attribute: String, partitions: Option[Int]) = Action {
 		attribute match {
-			case "leaver_status" => Ok(Statistics.getBinary(spark, dataframe.select(attribute), attribute))
-			case _ => Ok(Statistics.get(spark, dataframe.select(attribute), attribute, partitions.get))
+			case "leaver_status"    => Ok(Statistics.getBinary(dataframe, attribute))
+			case _                  => Ok(Statistics.get(spark, dataframe, attribute, partitions.get))
 		}
 	}
 
 	def getSample(percentage: Double) = Action {
-		val result = Dataset.getSample(spark, dataframe, percentage / 100)
+		val result = Dataset.getSample(dataframe, percentage / 100)
 
 		Ok(result)
 	}

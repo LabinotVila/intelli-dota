@@ -1,6 +1,6 @@
 package utilities
 
-object Globals {
+object Constants {
 	val MAIN_ROUTE = "C:/Users/Labinot/Desktop/main_route/"
 
 	val FETCHED_STEAM_DATA = "fetched_steam_data"
