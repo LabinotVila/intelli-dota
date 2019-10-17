@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.Optional
+
 import javax.inject._
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -23,9 +25,19 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		Ok(prediction.toJSON.collectAsList.toString)
 	}
 
-	def selectAsCount(var1: String) = Action {
-		val operation = Visualization.operateOn(spark, dataframe.select(var1), var1)
+	def groupByAndCount(attr: String, partitions: Option[Int]) = Action {
+		println(attr)
+		attr match {
+			case "leaver_status" => {
+				val binaryGraph = new classes.BinaryGraph
 
-		Ok(operation)
+				Ok(binaryGraph.vizualize(spark, dataframe.select(attr), attr))
+			}
+			case _ => {
+				val NGraph = new classes.NGraph(partitions.get)
+
+				Ok(NGraph.vizualize(spark, dataframe.select(attr), attr))
+			}
+		}
 	}
 }
