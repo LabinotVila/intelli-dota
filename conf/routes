@@ -11,15 +11,3 @@ GET     /getCorrelationMatrix       controllers.MainController.getCorrelationMat
 GET     /getSample                  controllers.MainController.getSample(percentage: Double)
 POST    /postPredict                controllers.MainController.postPredict(gold_per_min: Int, level: Int, leaver_status: Int, xp_per_min: Int, radiant_score: Int, gold_spent: Int, deaths: Int, denies: Int, hero_damage: Int, tower_damage: Int, last_hits: Int, hero_healing: Int, duration: Int)
 GET     /getGroupAndCount           controllers.MainController.getGroupAndCount(attribute: String, partitions: Option[Int])
-
-
-#GET     /                           controllers.HomeController.index
-# An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
-
-# An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
-
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
-
