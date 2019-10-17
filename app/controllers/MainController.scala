@@ -3,7 +3,8 @@ package controllers
 import javax.inject._
 import play.api.libs.json.Json
 import play.api.mvc._
-import runnable.Runnable
+import classes.Statistics
+import runnable.Dataset
 import helper.Globals
 
 @Singleton
@@ -11,46 +12,35 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	val spark = helper.SparkSes.createSparkSession("IntelliD", "local[*]")
 	val dataframe = helper.DataframeImporter.importDataframe(spark, Globals.MAIN_ROUTE + Globals.FETCHED_STEAM_DATA)
 
-	def index = Action {
-		Ok("Welcome to us!")
-	}
-
 	def getColumns = Action {
-		val columnNames = Runnable.getMainTableColumns(spark, dataframe)
+		val columnNames = Dataset.getColumns(spark, dataframe)
 
-		Ok(Json.toJson(columnNames))
+		val result = Json.toJson(columnNames)
+
+		Ok(result)
 	}
 
-	def predict(attributes: Int*) = Action {
-		val prediction = Runnable.predict(spark, dataframe, attributes)
+	def postPredict(attributes: Int*) = Action {
+		val result = Dataset.predict(spark, dataframe, attributes)
 
-		Ok(prediction.toJSON.collectAsList.toString)
+		Ok(result)
 	}
 
-	def corr() = Action {
-		val matrix = Runnable.correlationMatrix(spark, dataframe)
+	def getCorrelationMatrix() = Action {
+		val result = Dataset.getCorrelationMatrix(spark, dataframe)
 
-		Ok(matrix)
+		Ok(result)
 	}
 
-	def groupByAndCount(attr: String, partitions: Option[Int]) = Action {
-		attr match {
-			case "leaver_status" => {
-				val binaryGraph = new classes.BinaryGraph
-
-				Ok(binaryGraph.vizualize(spark, dataframe.select(attr), attr))
-			}
-			case _ => {
-				val NGraph = new classes.NGraph(partitions.get)
-
-				Ok(NGraph.vizualize(spark, dataframe.select(attr), attr))
-			}
+	def getGroupAndCount(attribute: String, partitions: Option[Int]) = Action {
+		attribute match {
+			case "leaver_status" => Ok(Statistics.getBinary(spark, dataframe.select(attribute), attribute))
+			case _ => Ok(Statistics.get(spark, dataframe.select(attribute), attribute, partitions.get))
 		}
 	}
 
-	def showSample(percentage: Double) = Action {
-		val result = runnable.ShowSample.showSample(spark, dataframe, percentage / 100)
-
+	def getSample(percentage: Double) = Action {
+		val result = Dataset.getSample(spark, dataframe, percentage / 100)
 
 		Ok(result)
 	}
