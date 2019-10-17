@@ -1,13 +1,11 @@
-package runnable
+package utilities
 
-import helper.Globals
 import org.apache.spark.ml.PipelineModel
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.stat.Correlation
-import org.apache.spark.sql.functions._
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql._
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.types.{DoubleType, StructType}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 object Dataset {
 	def getCorrelationMatrix(spark: SparkSession, dataframe: DataFrame) = {

@@ -3,14 +3,12 @@ package controllers
 import javax.inject._
 import play.api.libs.json.Json
 import play.api.mvc._
-import classes.Statistics
-import runnable.Dataset
-import helper.Globals
+import utilities.{Dataset, Globals, Statistics, Pre}
 
 @Singleton
 class MainController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
-	val spark = helper.SparkSes.createSparkSession("IntelliD", "local[*]")
-	val dataframe = helper.DataframeImporter.importDataframe(spark, Globals.MAIN_ROUTE + Globals.FETCHED_STEAM_DATA)
+	val spark = Pre.spark("Our App", "local[*]")
+	val dataframe = Pre.dataframe(spark, Globals.MAIN_ROUTE + Globals.FETCHED_STEAM_DATA)
 
 	def getColumns = Action {
 		val columnNames = Dataset.getColumns(spark, dataframe)

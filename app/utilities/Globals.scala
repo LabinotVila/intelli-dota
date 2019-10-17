@@ -1,4 +1,4 @@
-package helper
+package utilities
 
 object Globals {
 	// routes

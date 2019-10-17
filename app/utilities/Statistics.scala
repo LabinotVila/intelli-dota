@@ -1,4 +1,5 @@
-package classes
+package utilities
+
 import org.apache.spark.ml.feature.Bucketizer
 import org.apache.spark.sql.functions.{col, max, min}
 import org.apache.spark.sql.types.DoubleType
