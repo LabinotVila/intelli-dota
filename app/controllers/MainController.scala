@@ -47,4 +47,11 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 			}
 		}
 	}
+
+	def showSample(percentage: Double) = Action {
+		val result = runnable.ShowSample.showSample(spark, dataframe, percentage / 100)
+
+
+		Ok(result)
+	}
 }

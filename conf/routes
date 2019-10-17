@@ -4,9 +4,11 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.MainController.index
+GET     /                           controllers.HomeController.index
+
 GET     /columns                    controllers.MainController.getColumns
 GET     /corr                       controllers.MainController.corr
+GET     /showSample                 controllers.MainController.showSample(percentage: Double)
 POST    /predict                    controllers.MainController.predict(gold_per_min: Int, level: Int, leaver_status: Int, xp_per_min: Int, radiant_score: Int, gold_spent: Int, deaths: Int, denies: Int, hero_damage: Int, tower_damage: Int, last_hits: Int, hero_healing: Int, duration: Int)
 GET     /groupByAndCount            controllers.MainController.groupByAndCount(attr: String, partitions: Option[Int])
 
