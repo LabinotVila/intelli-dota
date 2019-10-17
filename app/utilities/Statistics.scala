@@ -11,40 +11,26 @@ object Statistics {
 	}
 
 	def get(spark:SparkSession, dataframe: DataFrame, attribute: String, partitions: Int): String = {
-		val temp = "temp"
 		val bucket = "bucket"
 
-		val df = dataframe
-			.withColumn(temp, dataframe.col(attribute).cast(DoubleType))
-			.drop(attribute).withColumnRenamed(temp, attribute)
+		val eminem = dataframe.agg(min(attribute), max(attribute)).collectAsList().get(0)
 
-		val values = df.agg(max(col(attribute)), min(col(attribute))).collectAsList().get(0)
+		val splits = calculateFormula(eminem.getInt(0), eminem.getInt(1), partitions)
 
-		val f = calculateFormula(values.getDouble(0), values.getDouble(1), partitions)
+		val bucketizer = new Bucketizer().setInputCol(attribute).setOutputCol(bucket).setSplits(splits)
 
-		val bucketizer = new Bucketizer().setInputCol(attribute).setOutputCol(bucket).setSplits(f)
-
-		val partOne = bucketizer.transform(df).groupBy(bucket).count.orderBy(bucket).toJSON.collectAsList.toString
+		val partOne = bucketizer.transform(dataframe).groupBy(bucket).count.orderBy(bucket).toJSON.collectAsList.toString
 
 		val partTwo = bucketizer.getSplits.drop(1).dropRight(1).mkString(",")
 
 		partOne.concat("\n[" + partTwo + "]")
 	}
 
-	def calculateFormula(start: Double, end: Double, partitions: Int): Array[Double] = {
+	def calculateFormula(start: Int, end: Int, partitions: Int): Array[Double] = {
 		val leftover = (start + end) / partitions
 
-		var array = Array[Double](Double.NegativeInfinity)
+		val chunks = (start until end by leftover).toArray.map(_.toDouble) :+ Double.PositiveInfinity
 
-		var sum = 0.0
-		for (_ <- 1 to partitions) {
-			sum += leftover
-
-			array = array :+ sum
-		}
-
-		array = array :+ Double.PositiveInfinity
-
-		array
+		Array[Double](Double.NegativeInfinity) ++ chunks
 	}
 }

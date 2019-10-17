@@ -11,9 +11,7 @@ object Dataset {
 	def getCorrelationMatrix(spark: SparkSession, dataframe: DataFrame) = {
 		val columnNames = dataframe.schema.names.filter(col => !col.equals("radiant_win"))
 
-		val assembler = new VectorAssembler()
-			.setInputCols(columnNames)
-			.setOutputCol("features")
+		val assembler = new VectorAssembler().setInputCols(columnNames).setOutputCol("features")
 		val df = assembler.transform(dataframe)
 
 		Correlation.corr(df, "features").toJSON.collectAsList().toString
@@ -21,18 +19,16 @@ object Dataset {
 
 
 	def predict(spark: SparkSession, dataframe: DataFrame, s: Seq[Int]) = {
-		// create dataframe with the given sequence input from the user
+
 		val RDD = spark.sparkContext.makeRDD(List(Row.fromSeq(s)))
 		val columns = dataframe.schema.fields.filter(x => !x.name.equals("radiant_win"))
 		val df = spark.createDataFrame(RDD, StructType(columns))
 
-		// make the new schema ready
 		val newDF = dataframe.schema
 			.add("probability", DoubleType)
 			.add("prediction", DoubleType)
     		.names.filter(col => !col.equals("radiant_win"))
 
-		// load model and try the new input, selecting `newDF` columns and return the result
 		val model = PipelineModel.load(Globals.MAIN_ROUTE + Globals.CLASSIFIED_MODEL).transform(df)
 		model.select(newDF.map(col): _*).toJSON.collectAsList().toString
 	}
