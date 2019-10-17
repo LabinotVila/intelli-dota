@@ -2,11 +2,27 @@ package runnable
 
 import helper.Globals
 import org.apache.spark.ml.PipelineModel
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.linalg.Matrix
+import org.apache.spark.ml.stat.{ChiSquareTest, Correlation}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql._
 import org.apache.spark.sql.types._
 
 object Runnable {
+	def correlationMatrix(spark: SparkSession, dataframe: DataFrame) = {
+		val array = Array("gold_per_min", "level", "leaver_status", "xp_per_min", "radiant_score", "gold_spent", "deaths",
+			"denies", "hero_damage", "tower_damage", "last_hits", "hero_healing", "duration")
+
+		val assembler = new VectorAssembler()
+			.setInputCols(array)
+			.setOutputCol("features")
+		val df = assembler.transform(dataframe)
+
+		val data = Correlation.corr(df, "features")
+		data.toJSON.collectAsList().toString
+	}
+
 
 	def predict(spark: SparkSession, dataFrame: DataFrame, s: Seq[Int]) = {
 		val structureFields = List(

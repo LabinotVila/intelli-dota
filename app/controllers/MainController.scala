@@ -1,11 +1,9 @@
 package controllers
 
-import java.util.Optional
-
 import javax.inject._
 import play.api.libs.json.Json
 import play.api.mvc._
-import runnable.{Runnable, Visualization}
+import runnable.Runnable
 import helper.Globals
 
 @Singleton
@@ -14,6 +12,10 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	val dataframe = helper.DataframeImporter.importDataframe(spark, Globals.MAIN_ROUTE + Globals.FETCHED_STEAM_DATA)
 
 	def index = Action {
+		Ok("Welcome to us!")
+	}
+
+	def getColumns = Action {
 		val columnNames = Runnable.getMainTableColumns(spark, dataframe)
 
 		Ok(Json.toJson(columnNames))
@@ -25,8 +27,13 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		Ok(prediction.toJSON.collectAsList.toString)
 	}
 
+	def corr() = Action {
+		val matrix = Runnable.correlationMatrix(spark, dataframe)
+
+		Ok(matrix)
+	}
+
 	def groupByAndCount(attr: String, partitions: Option[Int]) = Action {
-		println(attr)
 		attr match {
 			case "leaver_status" => {
 				val binaryGraph = new classes.BinaryGraph
