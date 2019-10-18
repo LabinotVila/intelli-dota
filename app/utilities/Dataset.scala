@@ -1,11 +1,14 @@
 package utilities
 
-import org.apache.spark.ml.PipelineModel
+import org.apache.spark.ml.{PipelineModel, Transformer}
 import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.param.Param
 import org.apache.spark.ml.stat.Correlation
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.types.{DoubleType, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+
+import scala.util.Try
 
 object Dataset {
 	def getCorrelationMatrix(dataframe: DataFrame) = {
@@ -28,8 +31,32 @@ object Dataset {
 			.add("prediction", DoubleType)
     		.names.filter(col => !col.equals("radiant_win"))
 
-		val model = PipelineModel.load(Constants.MAIN_ROUTE + Constants.CLASSIFIED_MODEL).transform(df)
-		model.select(newDF.map(col): _*).toJSON.collectAsList().toString
+		getPredictedModel.transform(df).select(newDF.map(col): _*).toJSON.collectAsList().toString
+	}
+
+	def getStages(dataframe: DataFrame) = {
+		val model = PipelineModel.load(Constants.MAIN_ROUTE + Constants.CLASSIFIED_MODEL)
+
+		var flicker: Map[String, List[Map[String, String]]] = Map()
+
+		model.stages.foreach(x => {
+			var listOfMaps: List[Map[String, String]] = List()
+
+			x.params
+				.filter(param => x.get(param) != None)
+				.foreach(param => {
+					var mapOfStrings: Map[String, String] = Map()
+
+					mapOfStrings = mapOfStrings + ("name" -> param.name) + ("value" -> x.get(param).get.toString)
+
+					listOfMaps = listOfMaps :+ mapOfStrings
+				})
+
+
+			flicker = flicker + (x.uid -> listOfMaps)
+		})
+
+		flicker
 	}
 
 	def getColumns(dataframe: DataFrame) = {
@@ -38,5 +65,9 @@ object Dataset {
 
 	def getSample(dataframe: DataFrame, percentage: Double) = {
 		dataframe.sample(percentage).toJSON.collectAsList().toString
+	}
+
+	def getPredictedModel = {
+		PipelineModel.load(Constants.MAIN_ROUTE + Constants.CLASSIFIED_MODEL)
 	}
 }

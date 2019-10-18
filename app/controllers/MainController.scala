@@ -42,4 +42,10 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 
 		Ok(result)
 	}
+
+	def getStages() = Action {
+		val model = Dataset.getStages(dataframe)
+
+		Ok(Json.toJson(model))
+	}
 }
