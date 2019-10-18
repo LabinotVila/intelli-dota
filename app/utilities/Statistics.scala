@@ -9,8 +9,7 @@ object Statistics {
 		dataframe.select(attribute).groupBy(attribute).count().toJSON.collectAsList().toString
 	}
 
-	def get(spark: SparkSession, dataframe: DataFrame, attribute: String, partitions: Int): String = {
-		import spark.implicits._
+	def get(spark: SparkSession, dataframe: DataFrame, attribute: String, partitions: Int) = {
 		val bucket = "bucket"
 
 		val eminem = dataframe.agg(min(attribute), max(attribute)).collectAsList().get(0)
@@ -19,18 +18,21 @@ object Statistics {
 
 		val bucketizer = new Bucketizer().setInputCol(attribute).setOutputCol(bucket).setSplits(splits)
 
-		val partOne = bucketizer.transform(dataframe).groupBy(bucket).count.orderBy(bucket).toJSON.collectAsList().toString
-//		val asd: Seq[Row] = bucketizer.transform(dataframe).groupBy(bucket).count.orderBy(bucket).collect().toSeq.map(
-//			row => {
-//
-//				println(row.toString())
-//				row
-//			}
-//		)
+		val bucketizerList = bucketizer.transform(dataframe).groupBy(bucket).count.orderBy(bucket).collect().toList
 
-		val partTwo = bucketizer.getSplits.drop(1).dropRight(1).mkString(",")
+		val bucketizerSplits = bucketizer.getSplits.drop(1).dropRight(1)
 
-		partOne.concat("\n[" + partTwo + "]")
+		var mapOfMaps: Map[String, Map[String, String]] = Map()
+		var map: Map[String, String] = Map()
+
+		for (x <- 0 to bucketizerList.size - 1) {
+			map = map + ("count" -> bucketizerList(x)(1).toString) + ("border" -> bucketizerSplits(x).toString)
+
+			mapOfMaps = mapOfMaps + (bucketizerList(x)(0).toString -> map)
+
+		}
+
+		mapOfMaps.toSeq.sortWith(_._1 < _._1)
 	}
 
 	def calculateFormula(start: Int, end: Int, partitions: Int): Array[Double] = {

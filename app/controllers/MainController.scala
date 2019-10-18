@@ -33,7 +33,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	def getGroupAndCount(attribute: String, partitions: Option[Int]) = Action {
 		attribute match {
 			case "leaver_status"    => Ok(Statistics.getBinary(dataframe, attribute))
-			case _                  => Ok(Statistics.get(spark, dataframe, attribute, partitions.get))
+			case _                  => Ok(Json.toJson(Statistics.get(spark, dataframe, attribute, partitions.get)))
 		}
 	}
 
