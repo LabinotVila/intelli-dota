@@ -22,17 +22,16 @@ object Statistics {
 
 		val bucketizerSplits = bucketizer.getSplits.drop(1).dropRight(1)
 
-		var mapOfMaps: Map[String, Map[String, String]] = Map()
+		var list: List[Map[String, String]] = List()
 		var map: Map[String, String] = Map()
 
 		for (x <- 0 to bucketizerList.size - 1) {
-			map = map + ("count" -> bucketizerList(x)(1).toString) + ("border" -> bucketizerSplits(x).toString)
+			map = map + ("bucket" -> bucketizerList(x)(0).toString) + ("count" -> bucketizerList(x)(1).toString) + ("border" -> bucketizerSplits(x).toString)
 
-			mapOfMaps = mapOfMaps + (bucketizerList(x)(0).toString -> map)
-
+			list = list :+ map
 		}
 
-		mapOfMaps.toSeq.sortWith(_._1 < _._1)
+		list
 	}
 
 	def calculateFormula(start: Int, end: Int, partitions: Int): Array[Double] = {
