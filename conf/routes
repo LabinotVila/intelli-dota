@@ -1,19 +1,14 @@
-
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
-
-# An example controller showing a sample home page
+# FOR BOTH DATASETS
 GET     /getColumns                 controllers.MainController.getColumns(kind: String)
-#GET     /getSample                  controllers.MainController.getSample(kind: DataFrame, percentage: Double)
-#
-#GET     /getStages                  controllers.MainController.getStages(path: String)
-##
-##GET     /getGroupAndCount           controllers.MainController.getGroupAndCount(attribute: String, partitions: Option[Int])
-##GET     /getCorrelationMatrix       controllers.MainController.getCorrelationMatrix
-##
-#
-#GET     /getCenters                 controllers.MainController.getCenters
-##
-##POST    /postPredict                controllers.MainController.postPredict(gold_per_min: Int, level: Int, leaver_status: Int, xp_per_min: Int, radiant_score: Int, gold_spent: Int, deaths: Int, denies: Int, hero_damage: Int, tower_damage: Int, last_hits: Int, hero_healing: Int, duration: Int)
-##
+GET     /getSample                  controllers.MainController.getSample(kind: String, percentage: Double)
+GET     /getStages                  controllers.MainController.getStages(kind: String)
+GET     /getCorrelationMatrix       controllers.MainController.getCorrelationMatrix(kind: String)
+
+
+# ONLY FOR STEAM DATASET
+GET     /getGroupAndCount           controllers.MainController.getGroupAndCount(attribute: String, partitions: Option[Int])
+POST    /postPredict                controllers.MainController.postPredict(gold_per_min: Int, level: Int, leaver_status: Int, xp_per_min: Int, radiant_score: Int, gold_spent: Int, deaths: Int, denies: Int, hero_damage: Int, tower_damage: Int, last_hits: Int, hero_healing: Int, duration: Int)
+
+
+# ONLY FOR KAGGLE DATASET
+POST    /postCluster                controllers.MainController.postCluster(gold: Double, gold_per_min: Double, xp_per_min: Double, kills: Double, deaths: Double, assists: Double, denies: Double, last_hits: Double, hero_damage: Double, hero_healing: Double, tower_damage: Double, level: Double)
