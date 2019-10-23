@@ -1,7 +1,6 @@
 package utilities
 
-import org.apache.spark.ml.{PipelineModel, Transformer}
-import org.apache.spark.sql.functions.typedLit
+import org.apache.spark.ml.PipelineModel
 import org.apache.spark.ml.feature.VectorAssembler
 import play.api.libs.json.Json
 import org.apache.spark.ml.stat.Correlation

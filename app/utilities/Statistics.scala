@@ -2,7 +2,7 @@ package utilities
 
 import org.apache.spark.ml.feature.Bucketizer
 import org.apache.spark.sql.functions.{max, min}
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object Statistics {
 	def getBinary(dataframe: DataFrame, attribute: String): String = {
