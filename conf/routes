@@ -12,3 +12,5 @@ POST    /postPredict                controllers.MainController.postPredict(gold_
 
 # ONLY FOR KAGGLE DATASET
 POST    /postCluster                controllers.MainController.postCluster(gold: Double, gold_per_min: Double, xp_per_min: Double, kills: Double, deaths: Double, assists: Double, denies: Double, last_hits: Double, hero_damage: Double, hero_healing: Double, tower_damage: Double, level: Double)
+GET     /getClusterCount            controllers.MainController.getClusterCount()
+GET     /getClusterStats            controllers.MainController.getClusterStats()

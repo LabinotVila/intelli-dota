@@ -11,6 +11,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	val spark = Pre.spark("Our App", "local[*]")
 	val steam = Pre.dataframe(spark, Constants.MAIN_ROUTE + Constants.FETCHED_STEAM_DATA)
 	val kaggle = Pre.dataframe(spark, Constants.MAIN_ROUTE + Constants.KAGGLE_DATA)
+	val classified_kaggle = Pre.doCluster(kaggle)
 
 	// DOUBLE FUNCTIONALITY
 	def getColumns(kind: String) = Action {
@@ -57,5 +58,14 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 
 		Ok(result)
 	}
+	def getClusterCount = Action {
+		val result = Statistics.getBinary(classified_kaggle, "prediction")
 
+		Ok(result)
+	}
+	def getClusterStats() = Action {
+		val result = Dataset.getClusterStats(classified_kaggle)
+
+		Ok(result)
+	}
 }

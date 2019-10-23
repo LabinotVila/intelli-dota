@@ -82,4 +82,10 @@ object Dataset {
 
 		getPredictedModel(Constants.CLUSTERED_MODEL).transform(df).select(columnsWName.names.map(col): _*).toJSON.collectAsList().toString
 	}
+	def getClusterStats(dataframe: DataFrame) = {
+		val df = dataframe.groupBy("prediction").mean()
+
+		df.toJSON.collectAsList().toString
+	}
+
 }
