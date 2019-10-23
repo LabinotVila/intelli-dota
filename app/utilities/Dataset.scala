@@ -34,8 +34,8 @@ object Dataset {
 		getPredictedModel.transform(df).select(newDF.map(col): _*).toJSON.collectAsList().toString
 	}
 
-	def getStages(dataframe: DataFrame) = {
-		val model = PipelineModel.load(Constants.MAIN_ROUTE + Constants.CLASSIFIED_MODEL)
+	def getStages(path: String) = {
+		val model = PipelineModel.load(Constants.MAIN_ROUTE + path)
 
 		var flicker: Map[String, List[Map[String, String]]] = Map()
 
@@ -69,5 +69,11 @@ object Dataset {
 
 	def getPredictedModel = {
 		PipelineModel.load(Constants.MAIN_ROUTE + Constants.CLASSIFIED_MODEL)
+	}
+
+	def getCenters = {
+		val model = PipelineModel.load(Constants.MAIN_ROUTE + Constants.CLUSTERED_MODEL)
+
+
 	}
 }
