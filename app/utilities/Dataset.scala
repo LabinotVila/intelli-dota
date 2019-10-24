@@ -11,7 +11,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 object Dataset {
 	// BOTH DATASETS
 	def getStages(path: String) = {
-		val model = PipelineModel.load(Constants.MAIN_ROUTE + path)
+		val model = PipelineModel.load(path)
 
 		var flicker: Map[String, List[Map[String, String]]] = Map()
 
@@ -52,7 +52,7 @@ object Dataset {
 		Correlation.corr(df, "features").toJSON.collectAsList().toString
 	}
 	def getPredictedModel(path: String) = {
-		PipelineModel.load(Constants.MAIN_ROUTE + path)
+		PipelineModel.load(path)
 	}
 	def getStats(dataframe: DataFrame) = {
 		val rows = dataframe.count.toString
@@ -82,7 +82,8 @@ object Dataset {
 			.add("prediction", DoubleType)
 			.names.filter(col => !col.equals("radiant_win"))
 
-		getPredictedModel(Constants.CLASSIFIED_MODEL).transform(df).select(newDF.map(col): _*).toJSON.collectAsList().toString
+		getPredictedModel(sys.props.get("classified_model").get)
+			.transform(df).select(newDF.map(col): _*).toJSON.collectAsList().toString
 	}
 
 	// CLUSTERING DATASET
@@ -94,13 +95,13 @@ object Dataset {
 
 		val df = spark.createDataFrame(RDD, StructType(columns.fields))
 
-		getPredictedModel(Constants.CLUSTERED_MODEL).transform(df).select(columnsWName.names.map(col): _*).toJSON.collectAsList().toString
+		getPredictedModel(sys.props.get("clustered_model").get)
+			.transform(df).select(columnsWName.names.map(col): _*).toJSON.collectAsList().toString
 	}
 	def getClusterStats(dataframe: DataFrame) = {
 		val df = dataframe.groupBy("prediction").mean()
 
 		df.toJSON.collectAsList().toString
 	}
-
 
 }

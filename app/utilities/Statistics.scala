@@ -3,6 +3,7 @@ package utilities
 import org.apache.spark.ml.feature.Bucketizer
 import org.apache.spark.sql.functions.{max, min}
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import play.api.libs.json.Json
 
 object Statistics {
 	def getBinary(dataframe: DataFrame, attribute: String): String = {
@@ -31,7 +32,7 @@ object Statistics {
 			list = list :+ map
 		}
 
-		list
+		Json.toJson(list)
 	}
 
 	def calculateFormula(start: Int, end: Int, partitions: Int): Array[Double] = {

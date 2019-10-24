@@ -3,13 +3,13 @@ package controllers
 import javax.inject._
 import play.api.libs.json.Json
 import play.api.mvc._
-import utilities.{Constants, Dataset, Pre, Statistics}
+import utilities.{Dataset, Pre, Statistics}
 
 @Singleton
 class MainController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val spark = Pre.spark("Our App", "local[*]")
-	val steam = Pre.dataframe(spark, Constants.MAIN_ROUTE + Constants.FETCHED_STEAM_DATA)
-	val kaggle = Pre.dataframe(spark, Constants.MAIN_ROUTE + Constants.KAGGLE_DATA)
+	val steam = Pre.dataframe(spark, sys.props.get("fetched_steam_data").get)
+	val kaggle = Pre.dataframe(spark, sys.props.get("kaggle_data").get)
 	val classified_kaggle = Pre.doCluster(kaggle)
 
 	// DOUBLE FUNCTIONALITY
@@ -27,8 +27,8 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	}
 	def getStages(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getStages(Constants.CLASSIFIED_MODEL))
-			case "kaggle" => Ok(Dataset.getStages(Constants.CLUSTERED_MODEL))
+			case "steam" => Ok(Dataset.getStages(sys.props.get("classified_model").get))
+			case "kaggle" => Ok(Dataset.getStages(sys.props.get("clustered_model").get))
 		}
 	}
 	def getCorrelationMatrix(kind: String): Action[AnyContent] = Action {
@@ -41,7 +41,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		kind match {
 			case "steam" => Ok(Dataset.getStats(steam))
 			case "kaggle" => Ok(Dataset.getStats(kaggle))
-			case "rawKaggle" => Ok(Dataset.getRawStats(spark, Constants.MAIN_ROUTE + Constants.RAW_KAGGLE_DATA))
+			case "rawKaggle" => Ok(Dataset.getRawStats(spark, sys.props.get("raw_kaggle_data").get))
 		}
 	}
 
@@ -54,7 +54,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	def getGroupAndCount(attribute: String, partitions: Option[Int]): Action[AnyContent] = Action {
 		attribute match {
 			case "leaver_status"    => Ok(Statistics.getBinary(steam, attribute))
-			case _                  => Ok(Json.toJson(Statistics.get(spark, steam, attribute, partitions.get)))
+			case _                  => Ok(Statistics.get(spark, steam, attribute, partitions.get))
 		}
 	}
 

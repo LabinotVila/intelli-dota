@@ -13,7 +13,7 @@ object Pre {
 	}
 
 	def doCluster(dataframe: DataFrame): DataFrame = {
-		val classifiedModel = getPredictedModel(Constants.CLUSTERED_MODEL)
+		val classifiedModel = getPredictedModel(sys.props.get("clustered_model").get)
 
 		val transformed = classifiedModel.transform(dataframe)
 
