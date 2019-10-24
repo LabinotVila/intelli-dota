@@ -54,6 +54,21 @@ object Dataset {
 	def getPredictedModel(path: String) = {
 		PipelineModel.load(Constants.MAIN_ROUTE + path)
 	}
+	def getStats(dataframe: DataFrame) = {
+		val rows = dataframe.count.toString
+		val columns = dataframe.schema.names.length.toString
+
+		var map: Map[String, String] = Map[String, String]()
+
+		map = map + ("rows" -> rows) + ("columns" -> columns)
+
+		Json.toJson(map)
+	}
+	def getRawStats(spark: SparkSession, path: String) = {
+		val dataset = spark.read.csv(path)
+
+		getStats(dataset)
+	}
 
 	// CLASSIFICATION
 	def predict(spark: SparkSession, dataframe: DataFrame, s: Seq[Int]) = {
@@ -86,4 +101,6 @@ object Dataset {
 
 		df.toJSON.collectAsList().toString
 	}
+
+
 }

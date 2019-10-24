@@ -3,6 +3,7 @@ GET     /getColumns                 controllers.MainController.getColumns(kind: 
 GET     /getSample                  controllers.MainController.getSample(kind: String, percentage: Double)
 GET     /getStages                  controllers.MainController.getStages(kind: String)
 GET     /getCorrelationMatrix       controllers.MainController.getCorrelationMatrix(kind: String)
+GET     /getStats                   controllers.MainController.getStats(kind: String)
 
 
 # ONLY FOR STEAM DATASET
