@@ -104,4 +104,11 @@ object Dataset {
 		df.toJSON.collectAsList().toString
 	}
 
+	// MANUAL METHOD
+	def getSelectWhere(dataframe: DataFrame, column: String, isEqual: String, value: Int) = {
+
+		val res = dataframe.groupBy("leaver_status", "radiant_win").count()
+
+		res.toJSON.collectAsList.toString
+	}
 }

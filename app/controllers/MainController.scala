@@ -74,4 +74,10 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 
 		Ok(result)
 	}
+
+	def getSelectWhere(select: String, where: String, is: Int) = Action {
+		val result = Dataset.getSelectWhere(steam, select, where, is)
+
+		Ok(result)
+	}
 }

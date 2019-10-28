@@ -4,6 +4,7 @@ GET     /getSample                  controllers.MainController.getSample(kind: S
 GET     /getStages                  controllers.MainController.getStages(kind: String)
 GET     /getCorrelationMatrix       controllers.MainController.getCorrelationMatrix(kind: String)
 GET     /getStats                   controllers.MainController.getStats(kind: String)
+GET     /getSelectWhere             controllers.MainController.getSelectWhere(select: String, where: String, is: Int)
 
 
 # ONLY FOR STEAM DATASET
