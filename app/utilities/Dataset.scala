@@ -69,6 +69,18 @@ object Dataset {
 
 		getStats(dataset)
 	}
+	def getSchema(dataframe: DataFrame) = {
+		var list: List[Map[String, String]] = List()
+
+		dataframe.schema.fields.foreach(field => {
+			var map: Map[String, String] = Map()
+			map = map + ("column" -> field.name) + ("type" -> field.dataType.toString)
+
+			list = list :+ map
+		})
+
+		Json.toJson(list)
+	}
 
 	// CLASSIFICATION
 	def predict(spark: SparkSession, dataframe: DataFrame, s: Seq[Int]) = {

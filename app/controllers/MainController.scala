@@ -44,6 +44,12 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 			case "rawKaggle" => Ok(Dataset.getRawStats(spark, sys.props.get("raw_kaggle_data").get))
 		}
 	}
+	def getSchema(kind: String): Action[AnyContent] = Action {
+		kind match {
+			case "steam" => Ok(Dataset.getSchema(steam))
+			case "kaggle" => Ok(Dataset.getSchema(kaggle))
+		}
+	}
 
 	// CLASSIFICATION ONLY
 	def postPredict(attributes: Int*): Action[AnyContent] = Action {
