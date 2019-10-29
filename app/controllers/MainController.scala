@@ -81,9 +81,10 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		Ok(result)
 	}
 
-	def getSelectWhere(select: String, where: String, is: Int) = Action {
-		val result = Dataset.getSelectWhere(steam, select, where, is)
-
-		Ok(result)
+	def getDoubleGroup(kind: String, col1: String, col2: String) = Action {
+		kind match {
+			case "steam" => Ok(Dataset.getDoubleGroup(steam, col1, col2))
+			case "kaggle" => Ok(Dataset.getDoubleGroup(kaggle, col1, col2))
+		}
 	}
 }

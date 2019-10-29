@@ -117,9 +117,8 @@ object Dataset {
 	}
 
 	// MANUAL METHOD
-	def getSelectWhere(dataframe: DataFrame, column: String, isEqual: String, value: Int) = {
-
-		val res = dataframe.groupBy("leaver_status", "radiant_win").count()
+	def getDoubleGroup(dataframe: DataFrame, col1: String, col2: String) = {
+		val res = dataframe.groupBy(col1, col2).count()
 
 		res.toJSON.collectAsList.toString
 	}
