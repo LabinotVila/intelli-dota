@@ -13,9 +13,9 @@ object Statistics {
 	def get(spark: SparkSession, dataframe: DataFrame, attribute: String, partitions: Int) = {
 		val bucket = "bucket"
 
-		val eminem = dataframe.agg(min(attribute), max(attribute)).collectAsList().get(0)
+		val eminem = dataframe.agg(max(attribute)).collectAsList().get(0)
 
-		val splits = calculateFormula(eminem.getInt(0), eminem.getInt(1), partitions)
+		val splits = calculateFormula(eminem.getInt(0), partitions)
 
 		val bucketizer = new Bucketizer().setInputCol(attribute).setOutputCol(bucket).setSplits(splits)
 
@@ -35,10 +35,10 @@ object Statistics {
 		Json.toJson(list)
 	}
 
-	def calculateFormula(start: Int, end: Int, partitions: Int): Array[Double] = {
-		val leftover = (start + end) / partitions
+	def calculateFormula(end: Int, partitions: Int): Array[Double] = {
+		val leftover = end / partitions
 
-		val chunks = (start until end by leftover).toArray.map(_.toDouble) :+ Double.PositiveInfinity
+		val chunks = (0 until end by leftover).toArray.map(_.toDouble) :+ Double.PositiveInfinity
 
 		Array[Double](Double.NegativeInfinity) ++ chunks
 	}
