@@ -81,6 +81,11 @@ object Dataset {
 
 		Json.toJson(list)
 	}
+	def getDoubleGroup(dataframe: DataFrame, col1: String, col2: String) = {
+		val res = dataframe.groupBy(col1, col2).count()
+
+		res.toJSON.collectAsList.toString
+	}
 
 	// CLASSIFICATION
 	def predict(spark: SparkSession, dataframe: DataFrame, s: Seq[Int]) = {
@@ -114,12 +119,5 @@ object Dataset {
 		val df = dataframe.groupBy("prediction").mean()
 
 		df.toJSON.collectAsList().toString
-	}
-
-	// MANUAL METHOD
-	def getDoubleGroup(dataframe: DataFrame, col1: String, col2: String) = {
-		val res = dataframe.groupBy(col1, col2).count()
-
-		res.toJSON.collectAsList.toString
 	}
 }
