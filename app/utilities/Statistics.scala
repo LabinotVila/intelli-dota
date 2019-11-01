@@ -2,7 +2,8 @@ package utilities
 
 import org.apache.spark.ml.feature.Bucketizer
 import org.apache.spark.sql.functions.{max, min}
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.types.IntegerType
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import play.api.libs.json.Json
 
 import scala.util.Try
@@ -15,13 +16,14 @@ object Statistics {
 	def get(spark: SparkSession, dataframe: DataFrame, attribute: String, partitions: Int) = {
 		val bucket = "bucket"
 
-		val eminem = dataframe.agg(min(attribute), max(attribute)).collectAsList().get(0)
+		val df = dataframe.select(dataframe.col(attribute).cast(IntegerType))
+		val eminem = df.agg(min(attribute), max(attribute)).collectAsList().get(0)
 
-		val splits = calculateFormula(eminem.getInt(0), eminem.getInt(1), partitions)
+		val splits = calculateFormula(eminem, partitions)
 
 		val bucketizer = new Bucketizer().setInputCol(attribute).setOutputCol(bucket).setSplits(splits)
 
-		val bucketizerList = bucketizer.transform(dataframe).groupBy(bucket).count.orderBy(bucket).collect().toList
+		val bucketizerList = bucketizer.transform(df).groupBy(bucket).count.orderBy(bucket).collect().toList
 
 		val bucketizerSplits = bucketizer.getSplits
 
@@ -39,11 +41,12 @@ object Statistics {
 		}
 
 		Json.toJson(list)
-
-
 	}
 
-	def calculateFormula(start: Int, end: Int, partitions: Int): Array[Double] = {
+	def calculateFormula(row: Row, partitions: Int): Array[Double] = {
+		val start = row.getInt(0)
+		val end = row.getInt(1)
+
 		val leftover = (end - start) / partitions
 
 		val chunks = (start until end by leftover).toArray.map(_.toDouble).dropRight(1) :+ end.toDouble

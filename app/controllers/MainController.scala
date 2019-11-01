@@ -57,10 +57,15 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 
 		Ok(result)
 	}
-	def getGroupAndCount(attribute: String, partitions: Option[Int]): Action[AnyContent] = Action {
-		attribute match {
-			case "leaver_status"    => Ok(Statistics.getBinary(steam, attribute))
-			case _                  => Ok(Statistics.get(spark, steam, attribute, partitions.get))
+	def getGroupAndCount(kind: String, attribute: String, partitions: Option[Int]): Action[AnyContent] = Action {
+		kind match {
+			case "steam" => {
+				attribute match {
+					case "leaver_status"    => Ok(Statistics.getBinary(steam, attribute))
+					case _                  => Ok(Statistics.get(spark, steam, attribute, partitions.get))
+				}
+			}
+			case "kaggle" => Ok(Statistics.get(spark, kaggle, attribute, partitions.get))
 		}
 	}
 
