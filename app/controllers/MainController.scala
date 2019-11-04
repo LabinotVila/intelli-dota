@@ -61,8 +61,8 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		kind match {
 			case "steam" => {
 				attribute match {
-					case "leaver_status"    => Ok(Statistics.getBinary(steam, attribute))
-					case _                  => Ok(Statistics.get(spark, steam, attribute, partitions.get))
+					case "leaver_status" | "radiant_win"    => Ok(Statistics.getBinary(steam, attribute))
+					case _                                  => Ok(Statistics.get(spark, steam, attribute, partitions.get))
 				}
 			}
 			case "kaggle" => Ok(Statistics.get(spark, kaggle, attribute, partitions.get))
