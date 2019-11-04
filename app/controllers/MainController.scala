@@ -16,45 +16,137 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		val string =
 			"""List of available API calls:
 			  |
-			  |# GENERIC
-			  |getColumns(kind: String)
-			  |/getColumns?kind=steam
-			  |
-			  |getSample(kind: String, percentage: Double)
-			  |/getSample?kind=steam&percentage=10
-			  |
-			  |getStages(kind: String)
-			  |/getStages?kind=kaggle
-			  |
-			  |getCorrelationMatrix(kind: String)
-			  |/getCorrelationMatrix?kind=kaggle
-			  |
-			  |getStats(kind: String)
-			  |/getStats?kind=steam
-			  |
-			  |getSchema(kind: String)
-			  |/getSchema?kind=steam
-			  |
-			  |getDoubleGroup(kind: String, col1: String, col2: String)
-			  |/getGroupAndCount?attribute=leaver_status&partitions=3
-			  |
-			  |getGroupAndCount(kind: String, attribute: String, partitions: Option[Int])
-			  |/getGroupAndCount?kind=kaggle&attribute=gold&partitions=10
+			  |Funksioni:       getColumns(kind: String)
+			  |URL:             /getColumns?kind=steam
+			  |Përshkrimi:      Nuk ka ndonjë përdorim specifik përveç se na ndihmon që të marrim kolonat e data seteve në mënyrë që të mos jenë të koduara në mënyrë të vrazhdë (ang. hard coded).
 			  |
 			  |
 			  |
-			  |# CLASSIFICATION
-			  |postPredict(attributes: Int*)
+			  |
+			  |
+			  |Funksioni:       getSample(kind: String, percentage: Double)
+			  |URL:             /getSample?kind=steam&percentage=10
+			  |Përshkrimi:      Përdoret për të vizualizuar të dhënat, konkretisht shfaqen kolonat me rreshtat përkatës, si një lloj tabele.
+			  |Shembull:
+			  |--------------------------------------------------------------------------
+			  ||    kolona1 |   kolona2 |   kolona3 |   kolona4 |   kolona5 |   kolona6 |
+			  |--------------------------------------------------------------------------
+			  ||    vlera10 |   vlera11 |   vlera12 |   vlera13 |   vlera14 |   vlera15 |
+			  |--------------------------------------------------------------------------
+			  ||    vlera20 |   vlera21 |   vlera22 |   vlera23 |   vlera24 |   vlera25 |
+			  |--------------------------------------------------------------------------
 			  |
 			  |
 			  |
-			  |# CLUSTER
-			  |postCluster(attributes: Double*)
-			  |getClusterCount
-			  |/getClusterCount
 			  |
-			  |getClusterStats
-			  |/getClusterStats
+			  |
+			  |Funksioni:       getStages(kind: String)
+			  |URL:             /getStages?kind=kaggle
+			  |Përshkrimi:      Përdoret për të shfaqur fazat nëpër të cilat kaluar algoritmi, si një gyp i vazhdueshëm.
+			  |Shembull:
+			  |Për thirrjen e mësipërme, do të donim të merrnim diqka si:
+			  |   _________________________o________________________________________________________o_________________________
+			  |                         vecAssembler                                                 kmeans
+			  |                         inputCols:   [Ljava.lang...]                                 k:         6
+			  |                         outputCols:  features                                        maxIteR:   25
+			  |
+			  |Për thirrjen /getStages?kind=steam do të donim të merrnim diqka si:
+			  |   _________________________o________________________________________________________o________________________________________________________o_________________________
+			  |                         vecAssembler                                            stdScal                                                     rfc
+			  |                         inputCols:  [Ljava.lang...]                             inputCol:   non-scaled                                  featuresCol:    features
+			  |                         outputCol:  non-scaled                                  outputCol:  features                                    labelCol:       label
+			  |                                                                                 withMean:   true                                        numTrees:       10
+			  |                                                                                 withStd:    true
+			  |Vërejtje: emri i klasës, për shembull 'vecAssembler' apo 'stdScal' apo 'kmeans' ndahet në vijën e poshtme (splits on underline) dhe merret vetëm pjesa e parë e emrit. Pjesa e dytë nuk është e nevojshme
+			  |pasi paraqet vetëm një ID të klasës përkatëse. Po ashtu, asnjë vlerë nuk është hard coded, të gjitha duhet të merren nga përgjigjja e kërkesës.
+			  |
+			  |
+			  |
+			  |
+			  |
+			  |Funksioni:       getCorrelationMatrix(kind: String)
+			  |URL:             /getCorrelationMatrix?kind=kaggle
+			  |Përshkrimi:      Rikthen një matricë A x A ku A - numri i kolonave të data setit përkatës, në rastin tonë kaggle, duhet të kombinohet me 'getColumns' të data setit përkatës.
+			  |Shembull:
+			  |Për thirrjen e mësipërme, matrica do të duket kështu:
+			  |----------------------------------------------------------------------------------------------------------
+			  ||                    |    gold_per_min    |   level      |   leaver_status   |   xp_per_min  |   ...     |
+			  |----------------------------------------------------------------------------------------------------------
+			  ||    gold_per_min    |   1.0              |   0.8652708  |   0.7978521       |   0.50636069  |   ...     |
+			  ||    level           |   0.8652708135101  |   1          |   0.9255410       |   0.65170968  |   ...     |
+			  ||    leaver_status   |   ...              |   ...        |   1               |   ...         |   ...     |
+			  ||    xp_per_min      |   ...              |   ...        |   ...             |   ...         |   ...     |
+			  |----------------------------------------------------------------------------------------------------------
+			  |
+			  |
+			  |
+			  |
+			  |
+			  |Funksioni:       getStats(kind: String)
+			  |URL:             /getStats?kind=steam
+			  |Përshkrimi:      Rikthen rreshtat dhe kolonat e data setit përkatës, janë përdorur për raport por këto informata janë të dobishme edhe për vizualizim.
+			  |
+			  |
+			  |
+			  |
+			  |
+			  |Funksioni:       getSchema(kind: String)
+			  |URL:             /getSchema?kind=steam
+			  |Përshkrimi:      Rikthen skemën e data setit përkatës, e dobishme për raport dhe vizualizim.
+			  |Shembull:
+			  |Një tabelë e thjeshtë ku paraqiten çiftet, pra:
+			  |----------------------------------
+			  ||    kolona      |   tipi        |
+			  |----------------------------------
+			  |     xp_per_min  |   double      |
+			  |----------------------------------
+			  |     gold_per_min|   double      |
+			  |----------------------------------
+			  |
+			  |
+			  |
+			  |
+			  |
+			  |Funksioni:           getGroupAndCount(kind: String, attribute: String, partitions: Option[Int])
+			  |URL:                 /getGroupAndCount?kind=kaggle&attribute=gold&partitions=4
+			  |Përshkrimi:          Rikthen grupimin varësisht particioneve, për shembull kthen një grafik ku në X është një atribut dhe në Y numri i njehësuar i grupimeve.
+			  |Shembull:
+			  |Për thirrjen e mësipërme, rezultati do të dukej kështu:
+			  |      51 |           |
+			  |      40 |  |        |
+			  |      14 |  |        |       |
+			  |         |  |        |       |
+			  |      5  |  |        |       |       |
+			  |         ---------------------------------------
+			  |             0       1       2       3
+			  |         (1366-1716)     (2066-2416)
+			  |                 (1716-2066)     (2416-2769)
+			  |
+			  |
+			  |
+			  |
+			  |
+			  |Funksioni:           getClusterCount
+			  |URL:                 /getClusterCount
+			  |Përshkrimi:          Kthen grupimet dhe njehësimet
+			  |Shembull:
+			  |Për thirrjen e mësipërme, rezultati do të dukej kështu:
+			  |      36 |  |
+			  |      30 |  |                        |
+			  |      21 |  |                        |       |
+			  |      15 |  |                |       |       |
+			  |      6  |  |        |       |       |       |
+			  |      2  |  |        |       |       |       |       |
+			  |         --------------------------------------------
+			  |             0       1       2      3        4       5
+			  |
+			  |
+			  |
+			  |
+			  |
+			  |Funksioni:           getClusterStats
+			  |URL:                 /getClusterStats
+			  |Përshkrimi:          Kthen kllasterimin që mund të vizualizohet si hapi më sipër.
 			  |""".stripMargin
 
 		Ok(string)
