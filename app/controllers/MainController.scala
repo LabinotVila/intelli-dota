@@ -13,7 +13,51 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	val classified_kaggle = Pre.doCluster(kaggle)
 
 	def index = Action {
-		Ok("Welcome!")
+		val string =
+			"""List of available API calls:
+			  |
+			  |# GENERIC
+			  |getColumns(kind: String)
+			  |/getColumns?kind=steam
+			  |
+			  |getSample(kind: String, percentage: Double)
+			  |/getSample?kind=steam&percentage=10
+			  |
+			  |getStages(kind: String)
+			  |/getStages?kind=kaggle
+			  |
+			  |getCorrelationMatrix(kind: String)
+			  |/getCorrelationMatrix?kind=kaggle
+			  |
+			  |getStats(kind: String)
+			  |/getStats?kind=steam
+			  |
+			  |getSchema(kind: String)
+			  |/getSchema?kind=steam
+			  |
+			  |getDoubleGroup(kind: String, col1: String, col2: String)
+			  |/getGroupAndCount?attribute=leaver_status&partitions=3
+			  |
+			  |getGroupAndCount(kind: String, attribute: String, partitions: Option[Int])
+			  |/getGroupAndCount?kind=kaggle&attribute=gold&partitions=10
+			  |
+			  |
+			  |
+			  |# CLASSIFICATION
+			  |postPredict(attributes: Int*)
+			  |
+			  |
+			  |
+			  |# CLUSTER
+			  |postCluster(attributes: Double*)
+			  |getClusterCount
+			  |/getClusterCount
+			  |
+			  |getClusterStats
+			  |/getClusterStats
+			  |""".stripMargin
+
+		Ok(string)
 	}
 
 	// DOUBLE FUNCTIONALITY
@@ -60,13 +104,6 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 			case "kaggle" => Ok(Dataset.getDoubleGroup(kaggle, col1, col2))
 		}
 	}
-
-	// CLASSIFICATION ONLY
-	def postPredict(attributes: Int*): Action[AnyContent] = Action {
-		val result = Dataset.predict(spark, steam, attributes)
-
-		Ok(result)
-	}
 	def getGroupAndCount(kind: String, attribute: String, partitions: Option[Int]): Action[AnyContent] = Action {
 		kind match {
 			case "steam" => {
@@ -77,6 +114,13 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 			}
 			case "kaggle" => Ok(Statistics.get(spark, kaggle, attribute, partitions.get))
 		}
+	}
+
+	// CLASSIFICATION ONLY
+	def postPredict(attributes: Int*): Action[AnyContent] = Action {
+		val result = Dataset.predict(spark, steam, attributes)
+
+		Ok(result)
 	}
 
 	// CLUSTER ONLY
@@ -90,7 +134,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 
 		Ok(result)
 	}
-	def getClusterStats(): Action[AnyContent] = Action {
+	def getClusterStats: Action[AnyContent] = Action {
 		val result = Dataset.getClusterStats(classified_kaggle)
 
 		Ok(result)
