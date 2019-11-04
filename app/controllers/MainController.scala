@@ -12,6 +12,10 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	val kaggle = Pre.dataframe(spark, sys.props.get("kaggle_data").get)
 	val classified_kaggle = Pre.doCluster(kaggle)
 
+	def index = Action {
+		Ok("Welcome!")
+	}
+
 	// DOUBLE FUNCTIONALITY
 	def getColumns(kind: String): Action[AnyContent] = Action {
 		kind match {
@@ -50,6 +54,12 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 			case "kaggle" => Ok(Dataset.getSchema(kaggle))
 		}
 	}
+	def getDoubleGroup(kind: String, col1: String, col2: String) = Action {
+		kind match {
+			case "steam" => Ok(Dataset.getDoubleGroup(steam, col1, col2))
+			case "kaggle" => Ok(Dataset.getDoubleGroup(kaggle, col1, col2))
+		}
+	}
 
 	// CLASSIFICATION ONLY
 	def postPredict(attributes: Int*): Action[AnyContent] = Action {
@@ -86,10 +96,5 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		Ok(result)
 	}
 
-	def getDoubleGroup(kind: String, col1: String, col2: String) = Action {
-		kind match {
-			case "steam" => Ok(Dataset.getDoubleGroup(steam, col1, col2))
-			case "kaggle" => Ok(Dataset.getDoubleGroup(kaggle, col1, col2))
-		}
-	}
+
 }

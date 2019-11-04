@@ -1,4 +1,5 @@
 # FOR BOTH DATASETS
+GET     /                           controllers.MainController.index()
 GET     /getColumns                 controllers.MainController.getColumns(kind: String)
 GET     /getSample                  controllers.MainController.getSample(kind: String, percentage: Double)
 GET     /getStages                  controllers.MainController.getStages(kind: String)
