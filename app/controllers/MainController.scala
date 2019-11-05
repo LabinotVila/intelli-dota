@@ -14,7 +14,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 
 	def index = Action {
 		val string =
-			"""List of available API calls:
+			"""
 			  |
 			  |Funksioni:       getColumns(kind: String)
 			  |URL:             /getColumns?kind=steam
