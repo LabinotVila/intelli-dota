@@ -23,7 +23,10 @@ object Dataset {
 				.foreach(param => {
 					var mapOfStrings: Map[String, String] = Map()
 
-					mapOfStrings = mapOfStrings + ("name" -> param.name) + ("value" -> x.get(param).get.toString)
+					val rawValue = x.get(param).get.toString
+
+					val value = if(rawValue.startsWith("[Ljava.")) "Array" else rawValue
+					mapOfStrings = mapOfStrings + ("name" -> param.name) + ("value" -> value)
 
 					listOfMaps = listOfMaps :+ mapOfStrings
 				})
