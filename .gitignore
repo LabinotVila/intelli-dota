@@ -4,16 +4,14 @@
 tmp
 dump
 
-# EXTRA
+# IntelliJ
 .idea
 
 # SBT
 dist
-project/boot
-project/target
-project/plugins/target
 target
-.target
+project
+
 
 # Play
 logs
