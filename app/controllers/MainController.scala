@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject._
-import play.api.libs.json.Json
 import play.api.mvc._
 import utilities.{Dataset, Pre, Statistics}
 
@@ -12,7 +11,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	val kaggle = Pre.dataframe(spark, sys.props.get("kaggle_data").get)
 	val classified_kaggle = Pre.doCluster(kaggle)
 
-	def index = Action {
+	def index: Action[AnyContent] = Action {
 		val string =
 			"""
 			  |
@@ -190,7 +189,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 			case "kaggle" => Ok(Dataset.getSchema(kaggle))
 		}
 	}
-	def getDoubleGroup(kind: String, col1: String, col2: String) = Action {
+	def getDoubleGroup(kind: String, col1: String, col2: String): Action[AnyContent] = Action {
 		kind match {
 			case "steam" => Ok(Dataset.getDoubleGroup(steam, col1, col2))
 			case "kaggle" => Ok(Dataset.getDoubleGroup(kaggle, col1, col2))
