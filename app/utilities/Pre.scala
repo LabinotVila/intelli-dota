@@ -15,7 +15,7 @@ object Pre {
 	}
 
 	def doCluster(dataframe: DataFrame): DataFrame = {
-		val classifiedModel = getPredictedModel("/usr/src/app/clustered_model")
+		val classifiedModel = getPredictedModel(Constants.CLUSTERED_MODEL)
 
 		val transformed = classifiedModel.transform(dataframe)
 

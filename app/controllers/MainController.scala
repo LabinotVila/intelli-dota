@@ -2,13 +2,13 @@ package controllers
 
 import javax.inject._
 import play.api.mvc._
-import utilities.{Dataset, Pre, Statistics}
+import utilities.{Constants, Dataset, Pre, Statistics}
 
 @Singleton
 class MainController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val spark = Pre.spark("Our App", "local[*]")
-	val steam = Pre.dataframe(spark, "/usr/src/app/fetched_steam_data")
-	val kaggle = Pre.dataframe(spark, "/usr/src/app/kaggle_data")
+	val steam = Pre.dataframe(spark, Constants.STEAM_FETCHED_DATA)
+	val kaggle = Pre.dataframe(spark, Constants.KAGGLE_DATA)
 	val classified_kaggle = Pre.doCluster(kaggle)
 
 	def index: Action[AnyContent] = Action {
@@ -166,8 +166,8 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	}
 	def getStages(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getStages("/usr/src/app/classified_model"))
-			case "kaggle" => Ok(Dataset.getStages("/usr/src/app/clustered_model"))
+			case "steam" => Ok(Dataset.getStages(Constants.CLASSIFIED_MODEL))
+			case "kaggle" => Ok(Dataset.getStages(Constants.CLUSTERED_MODEL))
 		}
 	}
 	def getCorrelationMatrix(kind: String): Action[AnyContent] = Action {
@@ -180,7 +180,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		kind match {
 			case "steam" => Ok(Dataset.getStats(steam))
 			case "kaggle" => Ok(Dataset.getStats(kaggle))
-			case "rawKaggle" => Ok(Dataset.getRawStats(spark, "/usr/src/app/raw_kaggle_data"))
+			case "rawKaggle" => Ok(Dataset.getRawStats(spark, Constants.RAW_KAGGLE_DATA))
 		}
 	}
 	def getSchema(kind: String): Action[AnyContent] = Action {

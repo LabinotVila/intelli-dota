@@ -10,7 +10,6 @@ dump
 # SBT
 dist
 target
-project
 
 
 # Play
