@@ -7,8 +7,8 @@ import utilities.{Dataset, Pre, Statistics}
 @Singleton
 class MainController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 	val spark = Pre.spark("Our App", "local[*]")
-	val steam = Pre.dataframe(spark, sys.props.get("fetched_steam_data").get)
-	val kaggle = Pre.dataframe(spark, sys.props.get("kaggle_data").get)
+	val steam = Pre.dataframe(spark, "/usr/src/app/fetched_steam_data")
+	val kaggle = Pre.dataframe(spark, "/usr/src/app/kaggle_data")
 	val classified_kaggle = Pre.doCluster(kaggle)
 
 	def index: Action[AnyContent] = Action {
@@ -166,8 +166,8 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	}
 	def getStages(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getStages(sys.props.get("classified_model").get))
-			case "kaggle" => Ok(Dataset.getStages(sys.props.get("clustered_model").get))
+			case "steam" => Ok(Dataset.getStages("/usr/src/app/classified_model"))
+			case "kaggle" => Ok(Dataset.getStages("/usr/src/app/clustered_model"))
 		}
 	}
 	def getCorrelationMatrix(kind: String): Action[AnyContent] = Action {
@@ -180,7 +180,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		kind match {
 			case "steam" => Ok(Dataset.getStats(steam))
 			case "kaggle" => Ok(Dataset.getStats(kaggle))
-			case "rawKaggle" => Ok(Dataset.getRawStats(spark, sys.props.get("raw_kaggle_data").get))
+			case "rawKaggle" => Ok(Dataset.getRawStats(spark, "/usr/src/app/raw_kaggle_data"))
 		}
 	}
 	def getSchema(kind: String): Action[AnyContent] = Action {

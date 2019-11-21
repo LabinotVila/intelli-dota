@@ -102,7 +102,7 @@ object Dataset {
 			.add("prediction", DoubleType)
 			.names.filter(col => !col.equals("radiant_win"))
 
-		getPredictedModel(sys.props.get("classified_model").get)
+		getPredictedModel("/usr/src/app/classified_model")
 			.transform(df).select(newDF.map(col): _*).toJSON.collectAsList().toString
 	}
 
@@ -115,7 +115,7 @@ object Dataset {
 
 		val df = spark.createDataFrame(RDD, StructType(columns.fields))
 
-		getPredictedModel(sys.props.get("clustered_model").get)
+		getPredictedModel("/usr/src/app/clustered_model")
 			.transform(df).select(columnsWName.names.map(col): _*).toJSON.collectAsList().toString
 	}
 	def getClusterStats(dataframe: DataFrame) = {

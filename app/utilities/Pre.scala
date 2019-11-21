@@ -5,7 +5,9 @@ import utilities.Dataset.getPredictedModel
 
 object Pre {
 	def spark(appName: String, master: String) = {
-		SparkSession.builder.appName(appName).master(master).getOrCreate
+		SparkSession.builder.appName(appName).master(master)
+			.config("spark.driver.host", "localhost")
+			.config("spark.testing.memory", "2147480000").getOrCreate
 	}
 
 	def dataframe(spark: SparkSession, path: String) = {
@@ -13,7 +15,7 @@ object Pre {
 	}
 
 	def doCluster(dataframe: DataFrame): DataFrame = {
-		val classifiedModel = getPredictedModel(sys.props.get("clustered_model").get)
+		val classifiedModel = getPredictedModel("/usr/src/app/clustered_model")
 
 		val transformed = classifiedModel.transform(dataframe)
 
