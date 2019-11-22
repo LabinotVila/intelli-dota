@@ -2,7 +2,7 @@ package utilities
 
 import org.apache.spark.ml.feature.Bucketizer
 import org.apache.spark.sql.functions.{max, min}
-import org.apache.spark.sql.types.IntegerType
+import org.apache.spark.sql.types.{DoubleType, IntegerType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import play.api.libs.json.Json
 
@@ -16,7 +16,7 @@ object Statistics {
 	def get(spark: SparkSession, dataframe: DataFrame, attribute: String, partitions: Int) = {
 		val bucket = "bucket"
 
-		val df = dataframe.select(dataframe.col(attribute).cast(IntegerType))
+		val df = dataframe.select(dataframe.col(attribute).cast(DoubleType))
 		val eminem = df.agg(min(attribute), max(attribute)).collectAsList().get(0)
 
 		val splits = calculateFormula(eminem, partitions)
@@ -30,7 +30,7 @@ object Statistics {
 		var list: List[Map[String, String]] = List()
 		var map: Map[String, String] = Map()
 
-		for (x <- 0 to bucketizerList.size - 1) {
+		for (x <- bucketizerList.indices) {
 			map = map +
 				("bucket" -> bucketizerList(x)(0).toString) +
 				("count" -> bucketizerList(x)(1).toString) +
@@ -44,12 +44,12 @@ object Statistics {
 	}
 
 	def calculateFormula(row: Row, partitions: Int): Array[Double] = {
-		val start = row.getInt(0)
-		val end = row.getInt(1)
+		val start = row.getDouble(0)
+		val end = row.getDouble(1)
 
 		val leftover = (end - start) / partitions
 
-		val chunks = (start until end by leftover).toArray.map(_.toDouble).dropRight(1) :+ end.toDouble
+		val chunks = (start until end by leftover).toArray :+ Double.PositiveInfinity
 
 		chunks
 
