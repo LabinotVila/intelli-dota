@@ -8,12 +8,14 @@ import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.types.{DoubleType, IntegerType, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
+import scala.collection.immutable.ListMap
+
 object Dataset {
 	// BOTH DATASETS
 	def getStages(path: String) = {
 		val model = PipelineModel.load(path)
 
-		var flicker: Map[String, List[Map[String, String]]] = Map()
+		var flicker: ListMap[String, List[Map[String, String]]] = ListMap()
 
 		model.stages.foreach(x => {
 			var listOfMaps: List[Map[String, String]] = List()
@@ -25,7 +27,7 @@ object Dataset {
 
 					val rawValue = x.get(param).get.toString
 
-					val value = if(rawValue.startsWith("[Ljava.")) "Array" else rawValue
+					val value = if(rawValue.startsWith("[")) "Array" else rawValue
 					mapOfStrings = mapOfStrings + ("name" -> param.name) + ("value" -> value)
 
 					listOfMaps = listOfMaps :+ mapOfStrings
@@ -35,7 +37,7 @@ object Dataset {
 			flicker = flicker + (x.uid -> listOfMaps)
 		})
 
-		Json.toJson(flicker)
+		Json.toJson(ListMap(flicker.toSeq.sortBy(_._1):_*))
 	}
 	def getColumns(dataframe: DataFrame) = {
 		Json.toJson(dataframe.schema.names.filter(x => !x.equals("radiant_win")))

@@ -6,8 +6,6 @@ import org.apache.spark.sql.types.{DoubleType, IntegerType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import play.api.libs.json.Json
 
-import scala.util.Try
-
 object Statistics {
 	def getBinary(dataframe: DataFrame, attribute: String): String = {
 		dataframe.select(attribute).groupBy(attribute).count().toJSON.collectAsList().toString
