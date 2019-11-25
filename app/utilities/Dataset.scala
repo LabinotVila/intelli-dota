@@ -11,6 +11,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import scala.collection.immutable.ListMap
 
 object Dataset {
+	val rand = scala.util.Random
 	// BOTH DATASETS
 	def getStages(path: String) = {
 		val model = PipelineModel.load(path)
@@ -23,18 +24,24 @@ object Dataset {
 			x.params
 				.filter(param => x.get(param) != None)
 				.foreach(param => {
-					var mapOfStrings: Map[String, String] = Map()
+					var nameValuePair: Map[String, String] = Map()
 
-					val rawValue = x.get(param).get.toString
+					val name = param.getClass.toString.split("\\.").last + " [" + param.name +"]: "
+					var value = x.get(param).get.toString
 
-					val value = if(rawValue.startsWith("[")) "Array" else rawValue
-					mapOfStrings = mapOfStrings + ("name" -> param.name) + ("value" -> value)
+					if (name.contains("ArrayParam"))
+						value = "Array of " + name.split("ArrayParam")(0).toLowerCase + "s"
 
-					listOfMaps = listOfMaps :+ mapOfStrings
+					nameValuePair = nameValuePair + ("name" -> name) + ("value" -> value)
+
+					listOfMaps = listOfMaps :+ nameValuePair
 				})
 
+			var stageName = x.getClass.toString.split("\\.").last.replace("Model", "")
 
-			flicker = flicker + (x.uid -> listOfMaps)
+			while(flicker.contains(stageName)) stageName = stageName + rand.nextInt(10).toString
+
+			flicker = flicker + (stageName -> listOfMaps)
 		})
 
 		Json.toJson(ListMap(flicker.toSeq.sortBy(_._1):_*))
