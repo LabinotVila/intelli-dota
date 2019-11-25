@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject._
 import play.api.mvc._
-import utilities.{Constants, Dataset, Pre, Statistics}
+import utilities.{Constants, Dataset, Pre, Statistics, Stages}
 
 @Singleton
 class MainController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
@@ -166,8 +166,8 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	}
 	def getStages(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getStages(Constants.ROOT + Constants.CLASSIFIED_MODEL))
-			case "kaggle" => Ok(Dataset.getStages(Constants.ROOT + Constants.CLUSTERED_MODEL))
+			case "steam" => Ok(Stages.getStages(Constants.ROOT + Constants.CLASSIFIED_MODEL))
+			case "kaggle" => Ok(Stages.getStages(Constants.ROOT + Constants.CLUSTERED_MODEL))
 		}
 	}
 	def getCorrelationMatrix(kind: String): Action[AnyContent] = Action {

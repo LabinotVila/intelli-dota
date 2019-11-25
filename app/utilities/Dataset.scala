@@ -1,11 +1,11 @@
 package utilities
 
-import org.apache.spark.ml.PipelineModel
+import org.apache.spark.ml.{PipelineModel, Transformer}
 import org.apache.spark.ml.feature.VectorAssembler
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import org.apache.spark.ml.stat.Correlation
 import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.types.{DoubleType, IntegerType, StructType}
+import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 import scala.collection.immutable.ListMap
@@ -13,39 +13,6 @@ import scala.collection.immutable.ListMap
 object Dataset {
 	val rand = scala.util.Random
 	// BOTH DATASETS
-	def getStages(path: String) = {
-		val model = PipelineModel.load(path)
-
-		var flicker: ListMap[String, List[Map[String, String]]] = ListMap()
-
-		model.stages.foreach(x => {
-			var listOfMaps: List[Map[String, String]] = List()
-
-			x.params
-				.filter(param => x.get(param) != None)
-				.foreach(param => {
-					var nameValuePair: Map[String, String] = Map()
-
-					val name = param.getClass.toString.split("\\.").last + " [" + param.name +"]: "
-					var value = x.get(param).get.toString
-
-					if (name.contains("ArrayParam"))
-						value = "Array of " + name.split("ArrayParam")(0).toLowerCase + "s"
-
-					nameValuePair = nameValuePair + ("name" -> name) + ("value" -> value)
-
-					listOfMaps = listOfMaps :+ nameValuePair
-				})
-
-			var stageName = x.getClass.toString.split("\\.").last.replace("Model", "")
-
-			while(flicker.contains(stageName)) stageName = stageName + rand.nextInt(10).toString
-
-			flicker = flicker + (stageName -> listOfMaps)
-		})
-
-		Json.toJson(ListMap(flicker.toSeq.sortBy(_._1):_*))
-	}
 	def getColumns(dataframe: DataFrame) = {
 		Json.toJson(dataframe.schema.names.filter(x => !x.equals("radiant_win")))
 	}
@@ -81,8 +48,14 @@ object Dataset {
 
 		getStats(dataset)
 	}
-	def getSchema(dataframe: DataFrame) = {
+	def getSchema(dataframe: DataFrame): JsValue = {
 		var list: List[Map[String, String]] = List()
+
+		val filteredByDouble = dataframe.schema.fields.filter(field => field.dataType.equals(DoubleType))
+		val filteredByString = dataframe.schema.fields.filter(field => field.dataType.equals(StringType))
+
+		if(filteredByDouble.size == 0) return Json.toJson("Data set is made of Double Type values!")
+		if(filteredByString.size == 0) return Json.toJson("Data set is made of String Type values!")
 
 		dataframe.schema.fields.foreach(field => {
 			var map: Map[String, String] = Map()
