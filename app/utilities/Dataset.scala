@@ -1,79 +1,76 @@
 package utilities
 
-import org.apache.spark.ml.{PipelineModel, Transformer}
+import org.apache.spark.ml.PipelineModel
 import org.apache.spark.ml.feature.VectorAssembler
 import play.api.libs.json.{JsValue, Json}
 import org.apache.spark.ml.stat.Correlation
 import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType, StructType}
+import org.apache.spark.sql.types.{DoubleType, IntegerType, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-
-import scala.collection.immutable.ListMap
 
 object Dataset {
 	val rand = scala.util.Random
-	// BOTH DATASETS
-	def getColumns(dataframe: DataFrame) = {
+
+	def getColumns(dataframe: DataFrame): JsValue = {
 		Json.toJson(dataframe.schema.names.filter(x => !x.equals("radiant_win")))
 	}
-	def getSample(dataframe: DataFrame, percentage: Double) = {
+	def getSample(dataframe: DataFrame, percentage: Double):String = {
 		dataframe.sample(percentage).toJSON.collectAsList().toString
 	}
-	def getCorrelationMatrix(dataframe: DataFrame) = {
+	def getCorrelationMatrix(dataframe: DataFrame):String = {
 		val columnNames = dataframe
 			.schema.names
 			.filter(col => !col.equals("radiant_win") && !col.equals("localized_name"))
-
 
 		val assembler = new VectorAssembler().setInputCols(columnNames).setOutputCol("features")
 		val df = assembler.transform(dataframe)
 
 		Correlation.corr(df, "features").toJSON.collectAsList().toString
 	}
-	def getPredictedModel(path: String) = {
+	def getPredictedModel(path: String): PipelineModel = {
 		PipelineModel.load(path)
 	}
-	def getStats(dataframe: DataFrame) = {
+	def getStats(kind: String, dataframe: DataFrame): JsValue = {
 		val rows = dataframe.count.toString
 		val columns = dataframe.schema.names.length.toString
 
 		var map: Map[String, String] = Map[String, String]()
 
-		map = map + ("rows" -> rows) + ("columns" -> columns)
+		map = map + ("Rows" -> rows) + ("Columns" -> columns) + ("Source" -> kind)
 
 		Json.toJson(map)
 	}
-	def getRawStats(spark: SparkSession, path: String) = {
+	def getRawStats(spark: SparkSession, path: String): JsValue = {
 		val dataset = spark.read.csv(path)
 
-		getStats(dataset)
+		getStats("Kaggle (Raw)", dataset)
 	}
 	def getSchema(dataframe: DataFrame): JsValue = {
 		var list: List[Map[String, String]] = List()
 
-		val filteredByDouble = dataframe.schema.fields.filter(field => field.dataType.equals(DoubleType))
-		val filteredByString = dataframe.schema.fields.filter(field => field.dataType.equals(StringType))
-
-		if(filteredByDouble.size == 0) return Json.toJson("Data set is made of Double Type values!")
-		if(filteredByString.size == 0) return Json.toJson("Data set is made of String Type values!")
-
 		dataframe.schema.fields.foreach(field => {
 			var map: Map[String, String] = Map()
-			map = map + ("column" -> field.name) + ("type" -> field.dataType.toString)
+
+			val column = field.name
+				.replace("_", " ")
+				.split(" ")
+				.map(_.capitalize)
+				.mkString(" ")
+
+			map = map + ("column" -> column) + ("type" -> field.dataType.toString)
 
 			list = list :+ map
 		})
 
 		Json.toJson(list)
 	}
-	def getDoubleGroup(dataframe: DataFrame, col1: String, col2: String) = {
+	def getDoubleGroup(dataframe: DataFrame, col1: String, col2: String): String = {
 		val res = dataframe.groupBy(col1, col2).count()
 
 		res.toJSON.collectAsList.toString
 	}
 
-	// CLASSIFICATION
-	def predict(spark: SparkSession, dataframe: DataFrame, s: Seq[Int]) = {
+	def predict(spark: SparkSession, dataframe: DataFrame, s: Seq[Int]): String = {
 		val RDD = spark.sparkContext.makeRDD(List(Row.fromSeq(s)))
 
 		val columns = dataframe.schema.fields.filter(x => !x.name.equals("radiant_win"))
@@ -88,7 +85,6 @@ object Dataset {
 			.transform(df).select(newDF.map(col): _*).toJSON.collectAsList().toString
 	}
 
-	// CLUSTERING DATASET
 	def cluster(spark: SparkSession, dataframe: DataFrame, s: Seq[Double]): String = {
 		val RDD = spark.sparkContext.makeRDD(List(Row.fromSeq(s)))
 
@@ -100,7 +96,7 @@ object Dataset {
 		getPredictedModel(Constants.ROOT + Constants.CLUSTERED_MODEL)
 			.transform(df).select(columnsWName.names.map(col): _*).toJSON.collectAsList().toString
 	}
-	def getClusterStats(dataframe: DataFrame) = {
+	def getClusterStats(dataframe: DataFrame): String = {
 		val df = dataframe.groupBy("prediction").mean()
 
 		df.toJSON.collectAsList().toString

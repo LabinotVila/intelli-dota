@@ -14,6 +14,12 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	def index: Action[AnyContent] = Action {
 		val string =
 			"""
+			  |IntelliDota - Classification and Clustering
+			  |Universiteti i Prishtines @2019
+			  |
+			  |
+			  |
+			  |
 			  |
 			  |Funksioni:       getColumns(kind: String)
 			  |URL:             /getColumns?kind=steam
@@ -151,7 +157,6 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		Ok(string)
 	}
 
-	// DOUBLE FUNCTIONALITY
 	def getColumns(kind: String): Action[AnyContent] = Action {
 		kind match {
 			case "steam" => Ok(Dataset.getColumns(steam))
@@ -178,8 +183,8 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	}
 	def getStats(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getStats(steam))
-			case "kaggle" => Ok(Dataset.getStats(kaggle))
+			case "steam" => Ok(Dataset.getStats("Steam", steam))
+			case "kaggle" => Ok(Dataset.getStats("Kaggle (Processed)", kaggle))
 			case "rawKaggle" => Ok(Dataset.getRawStats(spark, Constants.ROOT + Constants.RAW_KAGGLE_DATA))
 		}
 	}
@@ -207,14 +212,12 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		}
 	}
 
-	// CLASSIFICATION ONLY
 	def postPredict(attributes: Int*): Action[AnyContent] = Action {
 		val result = Dataset.predict(spark, steam, attributes)
 
 		Ok(result)
 	}
 
-	// CLUSTER ONLY
 	def postCluster(attributes: Double*): Action[AnyContent] = Action {
 		val result = Dataset.cluster(spark, kaggle, attributes)
 

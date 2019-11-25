@@ -35,10 +35,11 @@ object Stages {
 				val paramName = param.name.capitalize
 
 				val name = paramClass + " [" + paramName + "]"
-				var value = x.get(param).get.toString.replaceAll("[\\-_]", " ").capitalize
+				var value = x.get(param).get.toString.replaceAll("[\\-_]", " ")
+    				.split(" ").map(_.capitalize).mkString(" ")
 
 				if (name.contains("ArrayParam"))
-					value = "Array of " + name.split("ArrayParam")(0).toLowerCase + "s"
+					value = "Array of " + name.split("ArrayParam")(0) + "s"
 
 				nameValuePair = nameValuePair + ("name" -> name) + ("value" -> value)
 
