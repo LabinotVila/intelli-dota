@@ -91,7 +91,9 @@ object Dataset {
 		val RDD = spark.sparkContext.makeRDD(List(Row.fromSeq(s)))
 
 		val columns = dataframe.schema
-		val columnsWName = columns.add("prediction", IntegerType)
+		val columnsWName = columns
+            .add("kills_out", IntegerType)
+			.add("prediction", IntegerType)
 
 		val df = spark.createDataFrame(RDD, StructType(columns.fields))
 
