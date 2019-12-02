@@ -57,7 +57,7 @@ object Dataset {
 				.map(_.capitalize)
 				.mkString(" ")
 
-			map = map + ("column" -> column) + ("type" -> field.dataType.toString)
+			map = map + ("column" -> column) + ("type" -> field.dataType.toString) + ("unique" -> dataframe.select(field.name).distinct.count.toString)
 
 			list = list :+ map
 		})
@@ -77,6 +77,8 @@ object Dataset {
 		val df = spark.createDataFrame(RDD, StructType(columns))
 
 		val newDF = dataframe.schema
+            .add("gold_spent_to_change", DoubleType)
+    		.add("hero_damage_to_change", DoubleType)
 			.add("probability", DoubleType)
 			.add("prediction", DoubleType)
 			.names.filter(col => !col.equals("radiant_win"))

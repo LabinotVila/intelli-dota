@@ -1,8 +1,8 @@
 package utilities
 
 object Constants {
-//	val ROOT = "./main_route/"
-	val ROOT = "/usr/src/app/"
+	val ROOT = "./main_route/"
+//	val ROOT = "/usr/src/app/"
 
 	val STEAM_FETCHED_DATA = "fetched_steam_data"
 	val KAGGLE_DATA = "kaggle_data"

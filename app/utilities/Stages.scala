@@ -1,13 +1,13 @@
 package utilities
 
 import org.apache.spark.ml.{PipelineModel, Transformer}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import utilities.Dataset.rand
 
 import scala.collection.immutable.ListMap
 
 object Stages {
-	def getStages(path: String) = {
+	def getStages(path: String): JsValue = {
 		val model = PipelineModel.load(path)
 
 		var mainMap: ListMap[String, List[Map[String, String]]] = ListMap()

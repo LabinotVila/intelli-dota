@@ -212,7 +212,9 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		}
 	}
 
-	def postPredict(attributes: Int*): Action[AnyContent] = Action {
+	def postPredict(attributes: Int*): Action[AnyContent] = Action { request =>
+		val attributes = request.body.asMultipartFormData.get.dataParts.map(v => v._2(0).toInt).toSeq
+
 		val result = Dataset.predict(spark, steam, attributes)
 
 		Ok(result)
