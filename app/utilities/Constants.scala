@@ -9,4 +9,7 @@ object Constants {
 	val RAW_KAGGLE_DATA = "raw_kaggle_data"
 	val CLUSTERED_MODEL = "clustered_model"
 	val CLASSIFIED_MODEL = "classified_model"
+
+	val WON_STRING = "Given the specific inputs, the radiant team has WON."
+	val LOST_STRING = "Given the specific inputs, the radiant team has LOST."
 }

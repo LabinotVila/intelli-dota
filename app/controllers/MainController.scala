@@ -1,8 +1,9 @@
 package controllers
 
 import javax.inject._
+import play.api.libs.json.{JsArray, Json}
 import play.api.mvc._
-import utilities.{Constants, Dataset, Pre, Statistics, Stages}
+import utilities.{Constants, Dataset, Pre, Stages, Statistics}
 
 @Singleton
 class MainController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
@@ -152,6 +153,46 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 			  |Funksioni:           getClusterStats
 			  |URL:                 /getClusterStats
 			  |Përshkrimi:          Kthen kllasterimin që mund të vizualizohet si hapi më sipër.
+			  |
+			  |
+			  |
+			  |
+			  |postPredict
+			  |{
+			  |	"gold_per_min": 2585,
+			  |	"level": 139,
+			  |	"leaver_status": 0,
+			  |	"xp_per_min": 0,
+			  |	"radiant_score": 34,
+			  |	"gold_spent": 0,
+			  |	"deaths": 0,
+			  |	"denies": 21,
+			  |	"hero_damage": 0,
+			  |	"tower_damage": 2732,
+			  |	"last_hits": 0,
+			  |	"hero_healing": 0,
+			  |	"duration": 0
+			  |}
+			  |
+			  |
+			  |
+			  |
+			  |
+			  |postCluster
+			  |{
+			  |	"gold": 2000.0,
+			  |	"gold_per_min": 5113.0,
+			  |	"xp_per_min": 1231.0,
+			  |	"kills": 21.2,
+			  |	"deaths": 3.3,
+			  |	"assists": 10.0,
+			  |	"denies": 34.3,
+			  |	"last_hits": 411.1,
+			  |	"hero_damage": 56000.2,
+			  |	"hero_healing": 0.0,
+			  |	"tower_damage": 22000.0,
+			  |	"level": 25
+			  |}
 			  |""".stripMargin
 
 		Ok(string)
@@ -159,8 +200,8 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 
 	def getColumns(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getColumns(steam))
-			case "kaggle" => Ok(Dataset.getColumns(kaggle))
+			case "steam" => Ok(Dataset.getSteamColumns(steam))
+			case "kaggle" => Ok(Dataset.getKaggleColumns(kaggle))
 		}
 	}
 	def getSample(kind: String, percentage: Double): Action[AnyContent] = Action {
@@ -184,7 +225,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 	def getStats(kind: String): Action[AnyContent] = Action {
 		kind match {
 			case "steam" => Ok(Dataset.getStats("Steam", steam))
-			case "kaggle" => Ok(Dataset.getStats("Kaggle (Processed)", kaggle))
+			case "kaggle" => Ok(Dataset.getStats("Kaggle [P]", kaggle))
 			case "rawKaggle" => Ok(Dataset.getRawStats(spark, Constants.ROOT + Constants.RAW_KAGGLE_DATA))
 		}
 	}
@@ -212,15 +253,23 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		}
 	}
 
-	def postPredict(attributes: Int*): Action[AnyContent] = Action { request =>
-		val attributes = request.body.asMultipartFormData.get.dataParts.map(v => v._2(0).toInt).toSeq
+	def postPredict: Action[AnyContent] = Action { request =>
+
+		val attributes = request.body.asJson.get.toString
+			.replace("{", "").replace("}", "")
+    		.split(",").map(row => row.split(":")(1).toInt).toSeq
 
 		val result = Dataset.predict(spark, steam, attributes)
 
 		Ok(result)
 	}
 
-	def postCluster(attributes: Double*): Action[AnyContent] = Action {
+	def postCluster: Action[AnyContent] = Action { request =>
+
+		val attributes = request.body.asJson.get.toString
+			.replace("{", "").replace("}", "")
+			.split(",").map(row => row.split(":")(1).toDouble).toSeq
+
 		val result = Dataset.cluster(spark, kaggle, attributes)
 
 		Ok(result)

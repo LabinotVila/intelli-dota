@@ -8,7 +8,13 @@ import play.api.libs.json.Json
 
 object Statistics {
 	def getBinary(dataframe: DataFrame, attribute: String): String = {
-		dataframe.select(attribute).groupBy(attribute).count().toJSON.collectAsList().toString
+		var df = dataframe.select(attribute).groupBy(attribute).count()
+
+		if (attribute.equals("prediction")) {
+			df = df.orderBy(attribute)
+		}
+
+		df.toJSON.collectAsList.toString
 	}
 
 	def get(spark: SparkSession, dataframe: DataFrame, attribute: String, partitions: Int) = {
