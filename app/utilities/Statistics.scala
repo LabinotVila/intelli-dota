@@ -35,11 +35,15 @@ object Statistics {
 		var map: Map[String, String] = Map()
 
 		for (x <- bucketizerList.indices) {
+
+			val lowerBound = bucketizerSplits(x).round / 1000
+			val upperBound = bucketizerSplits(x + 1) / 1000
+
 			map = map +
 				("bucket" -> bucketizerList(x)(0).toString) +
 				("count" -> bucketizerList(x)(1).toString) +
-				("lowerBound" -> bucketizerSplits(x).toString) +
-				("upperBound" -> bucketizerSplits(x + 1).toString)
+				("lowerBound" -> lowerBound.toString) +
+				("upperBound" -> upperBound.toString)
 
 			list = list :+ map
 		}

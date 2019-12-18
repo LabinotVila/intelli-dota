@@ -7,7 +7,7 @@ import utilities.{Constants, Dataset, Pre, Stages, Statistics}
 
 @Singleton
 class MainController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
-	val spark = Pre.spark("Our App", "local[*]")
+	val spark = Pre.spark(Constants.APP_NAME, Constants.MASTER)
 	val steam = Pre.dataframe(spark, Constants.ROOT + Constants.STEAM_FETCHED_DATA)
 	val kaggle = Pre.dataframe(spark, Constants.ROOT + Constants.KAGGLE_DATA)
 	val classified_kaggle = Pre.doCluster(kaggle)
@@ -200,56 +200,55 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 
 	def getColumns(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getSteamColumns(steam))
-			case "kaggle" => Ok(Dataset.getKaggleColumns(kaggle))
+			case Constants.STEAM => Ok(Dataset.getSteamColumns(steam))
+			case Constants.KAGGLE => Ok(Dataset.getKaggleColumns(kaggle))
 		}
 	}
 	def getSample(kind: String, percentage: Double): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getSample(steam, percentage / 100))
-			case "kaggle" => Ok(Dataset.getSample(kaggle, percentage / 100))
+			case Constants.STEAM => Ok(Dataset.getSample(steam, percentage / 100))
+			case Constants.KAGGLE => Ok(Dataset.getSample(kaggle, percentage / 100))
 		}
 	}
 	def getStages(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Stages.getStages(Constants.ROOT + Constants.CLASSIFIED_MODEL))
-			case "kaggle" => Ok(Stages.getStages(Constants.ROOT + Constants.CLUSTERED_MODEL))
+			case Constants.STEAM => Ok(Stages.getStages(Constants.ROOT + Constants.CLASSIFIED_MODEL))
+			case Constants.KAGGLE => Ok(Stages.getStages(Constants.ROOT + Constants.CLUSTERED_MODEL))
 		}
 	}
 	def getCorrelationMatrix(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getCorrelationMatrix(steam))
-			case "kaggle" => Ok(Dataset.getCorrelationMatrix(kaggle))
+			case Constants.STEAM => Ok(Dataset.getCorrelationMatrix(steam))
+			case Constants.KAGGLE => Ok(Dataset.getCorrelationMatrix(kaggle))
 		}
 	}
 	def getStats(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getStats("Steam", steam))
-			case "kaggle" => Ok(Dataset.getStats("Kaggle [P]", kaggle))
-			case "rawKaggle" => Ok(Dataset.getRawStats(spark, Constants.ROOT + Constants.RAW_KAGGLE_DATA))
+			case Constants.STEAM => Ok(Dataset.getStats(Constants.STEAM, steam))
+			case Constants.KAGGLE => Ok(Dataset.getStats(Constants.KAGGLE, kaggle))
 		}
 	}
 	def getSchema(kind: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getSchema(steam))
-			case "kaggle" => Ok(Dataset.getSchema(kaggle))
+			case Constants.STEAM => Ok(Dataset.getSchema(steam))
+			case Constants.KAGGLE => Ok(Dataset.getSchema(kaggle))
 		}
 	}
 	def getDoubleGroup(kind: String, col1: String, col2: String): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => Ok(Dataset.getDoubleGroup(steam, col1, col2))
-			case "kaggle" => Ok(Dataset.getDoubleGroup(kaggle, col1, col2))
+			case Constants.STEAM => Ok(Dataset.getDoubleGroup(steam, col1, col2))
+			case Constants.KAGGLE => Ok(Dataset.getDoubleGroup(kaggle, col1, col2))
 		}
 	}
 	def getGroupAndCount(kind: String, attribute: String, partitions: Option[Int]): Action[AnyContent] = Action {
 		kind match {
-			case "steam" => {
+			case Constants.STEAM => {
 				attribute match {
-					case "leaver_status" | "radiant_win"    => Ok(Statistics.getBinary(steam, attribute))
+					case Constants.LEAVER_STATUS | Constants.RADIANT_WIN => Ok(Statistics.getBinary(steam, attribute))
 					case _                                  => Ok(Statistics.get(spark, steam, attribute, partitions.get))
 				}
 			}
-			case "kaggle" => Ok(Statistics.get(spark, kaggle, attribute, partitions.get))
+			case Constants.KAGGLE => Ok(Statistics.get(spark, kaggle, attribute, partitions.get))
 		}
 	}
 
@@ -275,7 +274,7 @@ class MainController @Inject()(cc: ControllerComponents) extends AbstractControl
 		Ok(result)
 	}
 	def getClusterCount: Action[AnyContent] = Action {
-		val result = Statistics.getBinary(classified_kaggle, "prediction")
+		val result = Statistics.getBinary(classified_kaggle, Constants.PREDICTION)
 
 		Ok(result)
 	}
