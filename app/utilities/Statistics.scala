@@ -36,14 +36,17 @@ object Statistics {
 
 		for (x <- bucketizerList.indices) {
 
-			val lowerBound = bucketizerSplits(x).round / 1000
-			val upperBound = bucketizerSplits(x + 1) / 1000
+			val theX = bucketizerSplits(x)
+			val theY = bucketizerSplits(x + 1)
+
+//			val lowerBound = BigDecimal(theX).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
+//			val upperBound = BigDecimal(theY).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
 
 			map = map +
 				("bucket" -> bucketizerList(x)(0).toString) +
 				("count" -> bucketizerList(x)(1).toString) +
-				("lowerBound" -> lowerBound.toString) +
-				("upperBound" -> upperBound.toString)
+				("lowerBound" -> f"$theX%1.3f") +
+				("upperBound" -> f"$theY%1.3f")
 
 			list = list :+ map
 		}
